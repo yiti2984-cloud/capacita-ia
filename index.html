@@ -351,23 +351,38 @@ function checkQRParam(){
     var m = window.location.hash.match(/cap=([^&]+)/);
     if(m) capId = decodeURIComponent(m[1]);
   }
-  if(capId){
-    // Activar modo kiosco: solo muestra registro
-    document.body.classList.add('kiosco');
-    // Ocultar todas las páginas excepto asistencia
-    document.querySelectorAll('.page').forEach(function(pg){ pg.classList.remove('active'); });
-    gid('page-asistencia').classList.add('active');
-    // Agregar logo encima del formulario
-    var box = gid('page-asistencia').querySelector('.asist-box');
-    if(box && !gid('kiosco-logo-el')){
-      var logo = document.createElement('div');
-      logo.id = 'kiosco-logo-el';
-      logo.className = 'kiosco-logo';
-      logo.innerHTML = '<h1>🎓 CAPACITA IA</h1><p>Registro de Asistencia</p>';
-      box.insertBefore(logo, box.firstChild);
-    }
-    renderAsistencia(capId);
+  if(!capId) return;
+
+  // Activar modo kiosco
+  document.body.classList.add('kiosco');
+  document.querySelectorAll('.page').forEach(function(pg){ pg.classList.remove('active'); });
+  gid('page-asistencia').classList.add('active');
+
+  // Agregar logo
+  var box = gid('page-asistencia').querySelector('.asist-box');
+  if(box && !gid('kiosco-logo-el')){
+    var logo = document.createElement('div');
+    logo.id = 'kiosco-logo-el';
+    logo.className = 'kiosco-logo';
+    logo.innerHTML = '<h1>🎓 CAPACITA IA</h1><p>Registro de Asistencia</p>';
+    box.insertBefore(logo, box.firstChild);
   }
+
+  // Si la capacitación no existe en localStorage, crearla desde la URL
+  var cap = capacitaciones.find(function(c){ return c.id===capId; });
+  if(!cap){
+    // Extraer nombre desde parámetro opcional o usar el ID
+    var url2 = null;
+    try{ url2 = new URL(window.location.href); }catch(e){}
+    var nombre = url2 ? (url2.searchParams.get('nombre') || capId) : capId;
+    var fecha  = url2 ? (url2.searchParams.get('fecha')  || today()) : today();
+    cap = {id:capId, nombre:decodeURIComponent(nombre), fecha:fecha, hinicio:'', hfin:'', responsable:'', area:'Abierta'};
+    capacitaciones.push(cap);
+    saveData();
+    updateCapSelects();
+  }
+
+  renderAsistencia(capId);
 }
 
 window.addEventListener('hashchange', function(){
@@ -634,7 +649,7 @@ function generarQR(capId){
   if(!cap) return;
   currentQRCapId = capId;
   var base = window.location.href.split('?')[0].split('#')[0].replace(/\/$/,'');
-  var qrURL = base+'?cap='+encodeURIComponent(capId);
+  var qrURL = base+'?cap='+encodeURIComponent(capId)+'&nombre='+encodeURIComponent(cap.nombre)+'&fecha='+encodeURIComponent(cap.fecha);
   gid('qr-modal-title').textContent = '🔳 QR — '+cap.nombre;
   gid('qr-modal-info').innerHTML = '<strong>'+cap.nombre+'</strong> · '+fmt(cap.fecha)+' · '+cap.hinicio+'–'+cap.hfin+'<br>Responsable: '+cap.responsable;
   gid('qr-link-display').textContent = qrURL;
