@@ -4,157 +4,95 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CAPACITA IA</title>
-<!-- QR lib -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --pri:#1a3a5c;--pri2:#2563eb;--acc:#0ea5e9;
-    --suc:#10b981;--war:#f59e0b;--dan:#ef4444;
-    --bg:#f1f5f9;--card:#ffffff;--border:#e2e8f0;
-    --txt:#1e293b;--txt2:#64748b;--side:240px;
-  }
-  body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);display:flex;min-height:100vh}
-
-  /* SIDEBAR */
-  #sidebar{width:var(--side);background:var(--pri);color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;transition:transform .3s}
-  .logo{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12)}
-  .logo h1{font-size:1.2rem;font-weight:700}
-  .logo span{font-size:.7rem;color:var(--acc);text-transform:uppercase;letter-spacing:1px}
-  nav{flex:1;padding:12px 0;overflow-y:auto}
-  .nav-item{display:flex;align-items:center;gap:10px;padding:11px 20px;cursor:pointer;font-size:.875rem;transition:background .15s;border-left:3px solid transparent}
-  .nav-item:hover{background:rgba(255,255,255,.08)}
-  .nav-item.active{background:rgba(37,99,235,.35);border-left-color:var(--acc)}
-  .nav-item .ico{font-size:1.1rem;width:20px;text-align:center}
-  .sidebar-footer{padding:14px 20px;font-size:.72rem;color:rgba(255,255,255,.4);border-top:1px solid rgba(255,255,255,.1)}
-
-  /* MAIN */
-  #main{margin-left:var(--side);flex:1;display:flex;flex-direction:column;min-height:100vh}
-  .topbar{background:var(--card);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50}
-  .topbar h2{font-size:1.1rem;font-weight:600;color:var(--pri)}
-  .topbar .badge{background:var(--pri2);color:#fff;font-size:.7rem;padding:3px 10px;border-radius:20px}
-  .content{padding:28px;flex:1}
-
-  /* KPI */
-  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px}
-  .kpi-card{background:var(--card);border-radius:10px;padding:20px;border:1px solid var(--border);display:flex;flex-direction:column;gap:6px}
-  .kpi-card .kpi-val{font-size:2rem;font-weight:700}
-  .kpi-card .kpi-lbl{font-size:.78rem;color:var(--txt2)}
-  .kpi-card .kpi-ico{font-size:1.4rem}
-  .kpi-card.blue .kpi-val{color:var(--pri2)}
-  .kpi-card.green .kpi-val{color:var(--suc)}
-  .kpi-card.orange .kpi-val{color:var(--war)}
-  .kpi-card.red .kpi-val{color:var(--dan)}
-  .kpi-card.cyan .kpi-val{color:var(--acc)}
-
-  /* CARD */
-  .card{background:var(--card);border-radius:10px;border:1px solid var(--border);padding:22px;margin-bottom:22px}
-  .card-title{font-size:.95rem;font-weight:600;color:var(--pri);margin-bottom:16px;display:flex;align-items:center;gap:8px}
-
-  /* TABLES */
-  .tbl-wrap{overflow-x:auto}
-  table{width:100%;border-collapse:collapse;font-size:.82rem}
-  th{background:var(--pri);color:#fff;padding:10px 12px;text-align:left;font-weight:600;white-space:nowrap}
-  td{padding:9px 12px;border-bottom:1px solid var(--border)}
-  tr:hover td{background:#f8fafc}
-  .bs{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.72rem;font-weight:600}
-  .bs-a{background:#dcfce7;color:#166534}
-  .bs-i{background:#fee2e2;color:#991b1b}
-  .bs-ok{background:#dbeafe;color:#1e40af}
-  .bs-qr{background:#f3e8ff;color:#6b21a8}
-
-  /* FORMS */
-  .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
-  .form-group{display:flex;flex-direction:column;gap:5px}
-  label{font-size:.8rem;font-weight:600;color:var(--txt2)}
-  input,select{padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:.875rem;outline:none;transition:border .15s}
-  input:focus,select:focus{border-color:var(--pri2);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-  .btn{padding:10px 20px;border:none;border-radius:6px;font-size:.875rem;font-weight:600;cursor:pointer;transition:opacity .15s,transform .1s;display:inline-flex;align-items:center;gap:7px}
-  .btn:hover{opacity:.88;transform:translateY(-1px)}
-  .btn-pri{background:var(--pri2);color:#fff}
-  .btn-suc{background:var(--suc);color:#fff}
-  .btn-war{background:var(--war);color:#fff}
-  .btn-dan{background:var(--dan);color:#fff}
-  .btn-pur{background:#7c3aed;color:#fff}
-  .btn-sm{padding:6px 12px;font-size:.76rem}
-
-  /* ALERTS */
-  .alert{padding:12px 16px;border-radius:8px;font-size:.875rem;margin-bottom:14px;display:flex;align-items:center;gap:10px}
-  .al-suc{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
-  .al-dan{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
-  .al-war{background:#fef9c3;color:#713f12;border:1px solid #fef08a}
-  .al-info{background:#dbeafe;color:#1e40af;border:1px solid #bfdbfe}
-
-  /* ASISTENCIA */
-  .asist-box{max-width:500px;margin:0 auto}
-  .asist-result{padding:20px;border-radius:10px;text-align:center;margin-top:16px}
-  .asist-result.ok{background:#dcfce7;border:2px solid var(--suc)}
-  .asist-result.fail{background:#fee2e2;border:2px solid var(--dan)}
-  .asist-result .r-ico{font-size:2.5rem}
-  .asist-result .r-name{font-size:1.1rem;font-weight:700;margin:6px 0 2px}
-  .asist-result .r-sub{font-size:.85rem;color:var(--txt2)}
-  .qr-badge{display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;border-radius:6px;padding:4px 10px;font-size:.78rem;font-weight:600;margin-bottom:12px}
-
-  /* BAR CHART */
-  .bar-chart{display:flex;flex-direction:column;gap:10px}
-  .bar-row{display:flex;align-items:center;gap:10px;font-size:.82rem}
-  .bar-label{width:130px;text-align:right;flex-shrink:0}
-  .bar-track{flex:1;background:var(--bg);border-radius:6px;height:22px;overflow:hidden}
-  .bar-fill{height:100%;border-radius:6px;background:var(--pri2);transition:width .5s;display:flex;align-items:center;padding-left:8px;color:#fff;font-size:.72rem;font-weight:600}
-  .bar-count{width:30px;font-weight:700;color:var(--pri2)}
-
-  /* FILTER */
-  .filter-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:flex-end}
-  .filter-row input,.filter-row select{font-size:.82rem;padding:7px 11px}
-
-  /* IMPORT ZONE */
-  .drop-zone{border:2px dashed var(--border);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:14px}
-  .drop-zone:hover,.drop-zone.drag{border-color:var(--pri2);background:#eff6ff}
-  .drop-zone .dz-ico{font-size:2rem;margin-bottom:8px}
-  .drop-zone p{font-size:.85rem;color:var(--txt2)}
-  .drop-zone strong{color:var(--pri2)}
-
-  /* MODAL */
-  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;justify-content:center;align-items:center}
-  .modal-overlay.open{display:flex}
-  .modal{background:var(--card);border-radius:14px;padding:28px;max-width:480px;width:95%;max-height:90vh;overflow-y:auto}
-  .modal-title{font-size:1rem;font-weight:700;color:var(--pri);margin-bottom:18px;display:flex;align-items:center;gap:8px}
-  .modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
-
-  /* QR container */
-  #qr-canvas-wrap{display:flex;justify-content:center;margin:16px 0}
-  #qr-canvas-wrap canvas,#qr-canvas-wrap img{border:1px solid var(--border);border-radius:8px;padding:8px;background:#fff}
-
-  /* PAGE VIEWS */
-  .page{display:none}
-  .page.active{display:block}
-
-  /* RESPONSIVE */
-  @media(max-width:700px){
-    :root{--side:0px}
-    #sidebar{transform:translateX(-240px)}
-    #sidebar.open{transform:translateX(0);width:240px}
-    #main{margin-left:0}
-    .hamburger{display:flex !important}
-  }
-  .hamburger{display:none;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--pri)}
-
-  /* Import preview */
-  .import-preview{max-height:220px;overflow-y:auto;border:1px solid var(--border);border-radius:8px}
-  .imp-row{display:flex;gap:8px;padding:6px 10px;border-bottom:1px solid var(--border);font-size:.78rem;align-items:center}
-  .imp-row:last-child{border-bottom:none}
-  .imp-row.error{background:#fee2e2}
-  .imp-row.ok{background:#f0fdf4}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--pri:#1a3a5c;--pri2:#2563eb;--acc:#0ea5e9;--suc:#10b981;--war:#f59e0b;--dan:#ef4444;--bg:#f1f5f9;--card:#ffffff;--border:#e2e8f0;--txt:#1e293b;--txt2:#64748b;--side:240px}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);display:flex;min-height:100vh}
+#sidebar{width:var(--side);background:var(--pri);color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;transition:transform .3s}
+.logo{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,.12)}
+.logo h1{font-size:1.2rem;font-weight:700}
+.logo span{font-size:.7rem;color:var(--acc);text-transform:uppercase;letter-spacing:1px}
+nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 20px;cursor:pointer;font-size:.875rem;transition:background .15s;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.08)}
+.nav-item.active{background:rgba(37,99,235,.35);border-left-color:var(--acc)}
+.nav-item .ico{font-size:1.1rem;width:20px;text-align:center}
+.sidebar-footer{padding:14px 20px;font-size:.72rem;color:rgba(255,255,255,.4);border-top:1px solid rgba(255,255,255,.1)}
+#main{margin-left:var(--side);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50}
+.topbar h2{font-size:1.1rem;font-weight:600;color:var(--pri)}
+.topbar .badge{background:var(--pri2);color:#fff;font-size:.7rem;padding:3px 10px;border-radius:20px}
+.content{padding:28px;flex:1}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px}
+.kpi-card{background:var(--card);border-radius:10px;padding:20px;border:1px solid var(--border);display:flex;flex-direction:column;gap:6px}
+.kpi-card .kpi-val{font-size:2rem;font-weight:700}
+.kpi-card .kpi-lbl{font-size:.78rem;color:var(--txt2)}
+.kpi-card .kpi-ico{font-size:1.4rem}
+.kpi-card.blue .kpi-val{color:var(--pri2)}.kpi-card.green .kpi-val{color:var(--suc)}.kpi-card.orange .kpi-val{color:var(--war)}.kpi-card.red .kpi-val{color:var(--dan)}.kpi-card.cyan .kpi-val{color:var(--acc)}
+.card{background:var(--card);border-radius:10px;border:1px solid var(--border);padding:22px;margin-bottom:22px}
+.card-title{font-size:.95rem;font-weight:600;color:var(--pri);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{background:var(--pri);color:#fff;padding:10px 12px;text-align:left;font-weight:600;white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid var(--border)}
+tr:hover td{background:#f8fafc}
+.bs{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.72rem;font-weight:600}
+.bs-a{background:#dcfce7;color:#166534}.bs-i{background:#fee2e2;color:#991b1b}.bs-ok{background:#dbeafe;color:#1e40af}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+label{font-size:.8rem;font-weight:600;color:var(--txt2)}
+input,select{padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:.875rem;outline:none;transition:border .15s}
+input:focus,select:focus{border-color:var(--pri2);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.btn{padding:10px 20px;border:none;border-radius:6px;font-size:.875rem;font-weight:600;cursor:pointer;transition:opacity .15s,transform .1s;display:inline-flex;align-items:center;gap:7px}
+.btn:hover{opacity:.88;transform:translateY(-1px)}
+.btn-pri{background:var(--pri2);color:#fff}.btn-suc{background:var(--suc);color:#fff}.btn-war{background:var(--war);color:#fff}.btn-dan{background:var(--dan);color:#fff}.btn-pur{background:#7c3aed;color:#fff}.btn-sm{padding:6px 12px;font-size:.76rem}
+.alert{padding:12px 16px;border-radius:8px;font-size:.875rem;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.al-suc{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}.al-dan{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}.al-war{background:#fef9c3;color:#713f12;border:1px solid #fef08a}.al-info{background:#dbeafe;color:#1e40af;border:1px solid #bfdbfe}
+.asist-box{max-width:500px;margin:0 auto}
+.asist-result{padding:20px;border-radius:10px;text-align:center;margin-top:16px}
+.asist-result.ok{background:#dcfce7;border:2px solid var(--suc)}.asist-result.fail{background:#fee2e2;border:2px solid var(--dan)}
+.asist-result .r-ico{font-size:2.5rem}.asist-result .r-name{font-size:1.1rem;font-weight:700;margin:6px 0 2px}.asist-result .r-sub{font-size:.85rem;color:var(--txt2)}
+.qr-badge{display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;border-radius:6px;padding:4px 10px;font-size:.78rem;font-weight:600;margin-bottom:12px}
+.bar-chart{display:flex;flex-direction:column;gap:10px}
+.bar-row{display:flex;align-items:center;gap:10px;font-size:.82rem}
+.bar-label{width:130px;text-align:right;flex-shrink:0}
+.bar-track{flex:1;background:var(--bg);border-radius:6px;height:22px;overflow:hidden}
+.bar-fill{height:100%;border-radius:6px;background:var(--pri2);transition:width .5s;display:flex;align-items:center;padding-left:8px;color:#fff;font-size:.72rem;font-weight:600}
+.bar-count{width:30px;font-weight:700;color:var(--pri2)}
+.filter-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:flex-end}
+.filter-row input,.filter-row select{font-size:.82rem;padding:7px 11px}
+.drop-zone{border:2px dashed var(--border);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:14px}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--pri2);background:#eff6ff}
+.drop-zone .dz-ico{font-size:2rem;margin-bottom:8px}
+.drop-zone p{font-size:.85rem;color:var(--txt2)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;justify-content:center;align-items:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:14px;padding:28px;max-width:480px;width:95%;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:1rem;font-weight:700;color:var(--pri);margin-bottom:18px}
+.modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
+#qr-canvas-wrap{display:flex;justify-content:center;margin:16px 0}
+#qr-canvas-wrap canvas,#qr-canvas-wrap img{border:1px solid var(--border);border-radius:8px;padding:8px;background:#fff}
+.page{display:none}.page.active{display:block}
+.import-preview{max-height:220px;overflow-y:auto;border:1px solid var(--border);border-radius:8px}
+.imp-row{display:flex;gap:8px;padding:6px 10px;border-bottom:1px solid var(--border);font-size:.78rem;align-items:center}
+.imp-row:last-child{border-bottom:none}.imp-row.error{background:#fee2e2}.imp-row.ok{background:#f0fdf4}
+/* MODO KIOSCO - solo registro */
+body.kiosco #sidebar { display:none; }
+body.kiosco #main { margin-left:0; }
+body.kiosco .topbar { display:none; }
+body.kiosco .content { padding:16px; background:var(--pri); min-height:100vh; display:flex; align-items:center; justify-content:center; }
+body.kiosco #page-asistencia { width:100%; }
+body.kiosco .asist-box { max-width:460px; width:100%; }
+body.kiosco .asist-box .card { box-shadow:0 8px 32px rgba(0,0,0,.25); border-radius:16px; }
+.kiosco-header { text-align:center; color:#fff; margin-bottom:20px; }
+.kiosco-header h1 { font-size:1.6rem; font-weight:700; }
+.kiosco-header p { font-size:.9rem; opacity:.8; margin-top:4px; }
 </style>
 </head>
 <body>
-
-<!-- SIDEBAR -->
 <aside id="sidebar">
-  <div class="logo">
-    <h1>🎓 CAPACITA IA</h1>
-    <span>MVP v2 · Gestión Humana</span>
-  </div>
+  <div class="logo"><h1>🎓 CAPACITA IA</h1><span>MVP v2 · Gestión Humana</span></div>
   <nav id="nav">
     <div class="nav-item active" data-page="dashboard"><span class="ico">📊</span> Dashboard</div>
     <div class="nav-item" data-page="empleados"><span class="ico">👥</span> Base de Empleados</div>
@@ -162,10 +100,9 @@
     <div class="nav-item" data-page="asistencia"><span class="ico">✅</span> Registro Asistencia</div>
     <div class="nav-item" data-page="nomina"><span class="ico">📄</span> Reporte Nómina</div>
   </nav>
-  <div class="sidebar-footer">v2.0 · QR + CSV Import · 2025</div>
+  <div class="sidebar-footer">v2.1 · QR + CSV + Persistencia</div>
 </aside>
 
-<!-- MAIN -->
 <main id="main">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:12px">
@@ -197,43 +134,28 @@
 
     <!-- EMPLEADOS -->
     <div class="page" id="page-empleados">
-      <!-- Import Card -->
       <div class="card">
         <div class="card-title">📥 Importar Planta de Personal</div>
         <div id="imp-status"></div>
         <label for="csv-file-input" class="drop-zone" id="drop-zone">
           <div class="dz-ico">📂</div>
           <p><strong>Haz clic aquí</strong> para seleccionar un archivo CSV</p>
-          <p style="margin-top:4px;font-size:.75rem">Columnas requeridas: <code>codigo_interno, cedula, nombre, area, cargo, estado</code></p>
+          <p style="margin-top:4px;font-size:.75rem">Columnas: <code>codigo_interno; cedula; nombre; area; cargo; estado</code></p>
         </label>
         <input type="file" id="csv-file-input" accept=".csv,.txt" style="display:none">
         <div id="imp-preview"></div>
-        <div id="imp-actions" style="display:none;margin-top:12px;display:none;gap:10px">
+        <div id="imp-actions" style="display:none;gap:10px;margin-top:12px">
           <button class="btn btn-suc" id="imp-confirm-btn">✅ Confirmar Importación</button>
           <button class="btn btn-dan btn-sm" onclick="cancelImport()">Cancelar</button>
         </div>
       </div>
-      <!-- Filters + Table -->
       <div class="filter-row">
-        <div class="form-group">
-          <label>Buscar</label>
-          <input type="text" id="emp-search" placeholder="Nombre, cédula, código…" oninput="renderEmpleados()">
-        </div>
-        <div class="form-group">
-          <label>Área</label>
-          <select id="emp-area" onchange="renderEmpleados()"><option value="">Todas</option></select>
-        </div>
-        <div class="form-group">
-          <label>Estado</label>
-          <select id="emp-estado" onchange="renderEmpleados()">
-            <option value="">Todos</option><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option>
-          </select>
-        </div>
+        <div class="form-group"><label>Buscar</label><input type="text" id="emp-search" placeholder="Nombre, cédula, código…" oninput="renderEmpleados()"></div>
+        <div class="form-group"><label>Área</label><select id="emp-area" onchange="renderEmpleados()"><option value="">Todas</option></select></div>
+        <div class="form-group"><label>Estado</label><select id="emp-estado" onchange="renderEmpleados()"><option value="">Todos</option><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option></select></div>
         <span id="emp-count" style="font-size:.82rem;color:var(--txt2);align-self:flex-end;padding-bottom:8px"></span>
       </div>
-      <div class="card" style="padding:0;overflow:hidden">
-        <div class="tbl-wrap" id="emp-table"></div>
-      </div>
+      <div class="card" style="padding:0;overflow:hidden"><div class="tbl-wrap" id="emp-table"></div></div>
     </div>
 
     <!-- CAPACITACIONES -->
@@ -241,33 +163,20 @@
       <div class="card">
         <div class="card-title">➕ Nueva Capacitación</div>
         <div class="form-grid">
-          <div class="form-group">
-            <label>Nombre Capacitación</label>
-            <input type="text" id="cap-nombre" placeholder="Ej: Seguridad Industrial">
-          </div>
-          <div class="form-group">
-            <label>Fecha</label>
-            <input type="date" id="cap-fecha">
-          </div>
-          <div class="form-group">
-            <label>Hora Inicio</label>
-            <input type="time" id="cap-hinicio">
-          </div>
-          <div class="form-group">
-            <label>Hora Fin</label>
-            <input type="time" id="cap-hfin">
-          </div>
-          <div class="form-group">
-            <label>Responsable</label>
-            <input type="text" id="cap-resp" placeholder="Nombre del instructor">
-          </div>
-
+          <div class="form-group"><label>Nombre Capacitación</label><input type="text" id="cap-nombre" placeholder="Ej: Seguridad Industrial"></div>
+          <div class="form-group"><label>Fecha</label><input type="date" id="cap-fecha"></div>
+          <div class="form-group"><label>Hora Inicio</label><input type="time" id="cap-hinicio"></div>
+          <div class="form-group"><label>Hora Fin</label><input type="time" id="cap-hfin"></div>
+          <div class="form-group"><label>Responsable</label><input type="text" id="cap-resp" placeholder="Nombre del instructor"></div>
         </div>
         <div id="cap-alert" style="margin-top:12px"></div>
         <button class="btn btn-pri" style="margin-top:14px" onclick="crearCapacitacion()">➕ Crear Capacitación</button>
       </div>
       <div class="card" style="padding:0;overflow:hidden">
-        <div style="padding:16px 20px 8px;font-weight:600;color:var(--pri);font-size:.95rem">📋 Capacitaciones Registradas</div>
+        <div style="padding:16px 20px 8px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-weight:600;color:var(--pri);font-size:.95rem">📋 Capacitaciones Registradas</span>
+          <button class="btn btn-dan btn-sm" onclick="borrarCapacitaciones()">🗑️ Eliminar historial</button>
+        </div>
         <div class="tbl-wrap" id="cap-table"></div>
       </div>
     </div>
@@ -278,23 +187,9 @@
         <div id="qr-presel-banner"></div>
         <div class="card">
           <div class="card-title" style="justify-content:center;font-size:1.1rem">✅ Registro de Asistencia</div>
-          <div class="form-group" style="margin-bottom:14px">
-            <label>Capacitación</label>
-            <select id="asist-cap"></select>
-          </div>
-          <div class="form-grid" style="grid-template-columns:1fr 1fr">
-            <div class="form-group">
-              <label>Código Interno</label>
-              <input type="text" id="asist-codigo" placeholder="Ej: EMP-001" oninput="this.value=this.value.toUpperCase()">
-            </div>
-            <div class="form-group">
-              <label>Número de Cédula</label>
-              <input type="text" id="asist-cedula" placeholder="Ej: 1234567890">
-            </div>
-          </div>
-          <button class="btn btn-pri" style="width:100%;margin-top:16px;justify-content:center" onclick="registrarAsistencia()">
-            ✅ Registrar Asistencia
-          </button>
+          <div class="form-group" style="margin-bottom:14px"><label>Capacitación</label><select id="asist-cap"></select></div>
+          <div class="form-group" style="margin-bottom:14px"><label>Código Interno</label><input type="text" id="asist-codigo" placeholder="Ingresa tu código" style="font-size:1.1rem;padding:12px"></div>
+          <button class="btn btn-pri" style="width:100%;margin-top:16px;justify-content:center" onclick="registrarAsistencia()">✅ Registrar Asistencia</button>
           <div id="asist-result" style="margin-top:16px"></div>
         </div>
         <div class="card" style="margin-top:0">
@@ -308,18 +203,9 @@
     <div class="page" id="page-nomina">
       <div class="card" style="margin-bottom:16px">
         <div class="filter-row" style="margin-bottom:0">
-          <div class="form-group">
-            <label>Capacitación</label>
-            <select id="nom-cap-filter" onchange="renderNomina()"><option value="">Todas</option></select>
-          </div>
-          <div class="form-group">
-            <label>Fecha</label>
-            <input type="date" id="nom-fecha-filter" onchange="renderNomina()">
-          </div>
-          <div class="form-group">
-            <label>Área</label>
-            <select id="nom-area-filter" onchange="renderNomina()"><option value="">Todas</option></select>
-          </div>
+          <div class="form-group"><label>Capacitación</label><select id="nom-cap-filter" onchange="renderNomina()"><option value="">Todas</option></select></div>
+          <div class="form-group"><label>Fecha</label><input type="date" id="nom-fecha-filter" onchange="renderNomina()"></div>
+          <div class="form-group"><label>Área</label><select id="nom-area-filter" onchange="renderNomina()"><option value="">Todas</option></select></div>
           <button class="btn btn-suc" onclick="exportarCSV()">📥 Exportar para Nómina</button>
         </div>
       </div>
@@ -338,10 +224,10 @@
 <!-- MODAL QR -->
 <div class="modal-overlay" id="qr-modal">
   <div class="modal">
-    <div class="modal-title" id="qr-modal-title">🔳 Código QR — Registro de Asistencia</div>
+    <div class="modal-title" id="qr-modal-title">🔳 Código QR</div>
     <div id="qr-modal-info" style="font-size:.85rem;color:var(--txt2);margin-bottom:10px"></div>
     <div id="qr-canvas-wrap"></div>
-    <p style="font-size:.75rem;color:var(--txt2);text-align:center;margin-top:6px">Escanea este código para ir directo al registro de asistencia</p>
+    <p style="font-size:.75rem;color:var(--txt2);text-align:center;margin-top:6px">Escanea para ir al registro de asistencia</p>
     <div style="background:var(--bg);border-radius:8px;padding:10px 14px;margin-top:12px;font-size:.75rem;color:var(--txt2)">
       <strong>Enlace:</strong> <span id="qr-link-display" style="word-break:break-all"></span>
     </div>
@@ -354,293 +240,299 @@
 
 <script>
 // ============================================================
-// DATOS MAESTROS
+// DATOS INICIALES (demo)
 // ============================================================
-const AREAS = ['Producción','Calidad','Logística','RRHH','Finanzas','Comercial','TI','Mantenimiento','Seguridad','Gerencia'];
+var AREAS = ['Producción','Calidad','Logística','RRHH','Finanzas','Comercial','TI','Mantenimiento','Seguridad','Gerencia'];
 
-let empleados = [
-  {codigo:'EMP-001',cedula:'1098234561',nombre:'Carlos Andrés Ríos',area:'Producción',cargo:'Operario',estado:'Activo'},
-  {codigo:'EMP-002',cedula:'1020456789',nombre:'María Fernanda López',area:'Calidad',cargo:'Inspector QA',estado:'Activo'},
-  {codigo:'EMP-003',cedula:'7654321098',nombre:'Jorge Luis Peña',area:'Logística',cargo:'Auxiliar de Bodega',estado:'Activo'},
-  {codigo:'EMP-004',cedula:'3210987654',nombre:'Luisa Marcela Torres',area:'RRHH',cargo:'Analista de RRHH',estado:'Activo'},
-  {codigo:'EMP-005',cedula:'9876543210',nombre:'Pedro Antonio García',area:'Finanzas',cargo:'Contador',estado:'Activo'},
-  {codigo:'EMP-006',cedula:'4567890123',nombre:'Ana Milena Ruiz',area:'Comercial',cargo:'Asesora Comercial',estado:'Activo'},
-  {codigo:'EMP-007',cedula:'2345678901',nombre:'Juan David Morales',area:'TI',cargo:'Desarrollador',estado:'Activo'},
-  {codigo:'EMP-008',cedula:'6789012345',nombre:'Sandra Patricia Cruz',area:'Mantenimiento',cargo:'Técnico',estado:'Activo'},
-  {codigo:'EMP-009',cedula:'8901234567',nombre:'Andrés Felipe Vargas',area:'Seguridad',cargo:'Coordinador HSE',estado:'Activo'},
-  {codigo:'EMP-010',cedula:'5432109876',nombre:'Claudia Beatriz Ortiz',area:'Gerencia',cargo:'Gerente General',estado:'Activo'},
-  {codigo:'EMP-011',cedula:'1112223334',nombre:'Ricardo Emilio Salcedo',area:'Producción',cargo:'Supervisor',estado:'Activo'},
-  {codigo:'EMP-012',cedula:'5556667778',nombre:'Gloria Inés Montoya',area:'Calidad',cargo:'Jefe de Calidad',estado:'Activo'},
-  {codigo:'EMP-013',cedula:'9990001112',nombre:'Felipe Augusto Niño',area:'Logística',cargo:'Coordinador de Flota',estado:'Activo'},
-  {codigo:'EMP-014',cedula:'3334445556',nombre:'Valentina Arce',area:'RRHH',cargo:'Auxiliar Nomina',estado:'Activo'},
-  {codigo:'EMP-015',cedula:'7778889990',nombre:'Héctor Iván Sandoval',area:'Finanzas',cargo:'Tesorero',estado:'Inactivo'},
-  {codigo:'EMP-016',cedula:'2223334445',nombre:'Camila Sofía Bermúdez',area:'Comercial',cargo:'Directora Comercial',estado:'Activo'},
-  {codigo:'EMP-017',cedula:'6667778889',nombre:'Sebastián Castro',area:'TI',cargo:'Administrador de Red',estado:'Activo'},
-  {codigo:'EMP-018',cedula:'1234509876',nombre:'Isabel Cristina Parra',area:'Mantenimiento',cargo:'Jefe de Planta',estado:'Activo'},
-  {codigo:'EMP-019',cedula:'9876501234',nombre:'Mauricio León Jiménez',area:'Seguridad',cargo:'Inspector HSE',estado:'Activo'},
-  {codigo:'EMP-020',cedula:'4444555566',nombre:'Diana Carolina Reyes',area:'Producción',cargo:'Operaria',estado:'Inactivo'},
-  {codigo:'EMP-021',cedula:'1111222233',nombre:'Fabio Ernesto Cuellar',area:'TI',cargo:'Soporte Técnico',estado:'Activo'},
-  {codigo:'EMP-022',cedula:'3333444455',nombre:'Natalia Esperanza Roa',area:'Calidad',cargo:'Analista de Calidad',estado:'Activo'},
+var empleados = [
+  {codigo:'29',cedula:'31576717',nombre:'GUAPACHA LOZANO TANIA MARCELA',area:'GERENCIA GENERAL',cargo:'GERENTE GENERAL',estado:'Activo'},
+  {codigo:'50',cedula:'38862402',nombre:'LUCERO CUARAN OLGA MARINA',area:'PROVEEDURIA DE CAÑA',cargo:'ANALISTA PROVEEDORES',estado:'Activo'},
+  {codigo:'62',cedula:'1115066228',nombre:'LOPEZ PEREZ LEIDY VIVIANA',area:'CONTABILIDAD',cargo:'JEFE CONTABILIDAD Y COSTOS',estado:'Activo'},
+  {codigo:'83',cedula:'14888496',nombre:'ORTEGA RIOS CARLOS ALBERTO',area:'TECNOLOGIA',cargo:'INGENIERO DE MEJORAMIENTO',estado:'Activo'},
+  {codigo:'96',cedula:'6327358',nombre:'GETIAL GETIAL ANTONIO MARIA',area:'ALMACEN',cargo:'ANALISTA PLANEACION MANTENIMIENTO',estado:'Activo'},
 ];
 
-let capacitaciones = [
-  {id:'CAP-001',nombre:'Seguridad Industrial',fecha:'2025-06-10',hinicio:'08:00',hfin:'12:00',responsable:'Andrés Vargas',area:'Seguridad'},
-  {id:'CAP-002',nombre:'Manejo de Montacargas',fecha:'2025-06-11',hinicio:'14:00',hfin:'17:00',responsable:'Héctor Sandoval',area:'Logística'},
-  {id:'CAP-003',nombre:'Calidad en Procesos',fecha:'2025-06-12',hinicio:'09:00',hfin:'11:00',responsable:'Gloria Montoya',area:'Calidad'},
-  {id:'CAP-004',nombre:'Bienestar Laboral',fecha:'2025-06-13',hinicio:'10:00',hfin:'12:00',responsable:'Luisa Torres',area:'RRHH'},
-];
+var capacitaciones = [];
+var asistencias = [];
+var asistRechazados = 0;
+var nextAsistId = 1;
+var pendingImport = null;
+var currentQRCapId = null;
 
-let asistencias = [
-  {id:1,codigo:'EMP-001',cedula:'1098234561',nombre:'Carlos Andrés Ríos',area:'Producción',capacitacion:'Seguridad Industrial',capId:'CAP-001',fecha:'2025-06-10',hora:'08:15',estado:'Válido'},
-  {id:2,codigo:'EMP-011',cedula:'1112223334',nombre:'Ricardo Emilio Salcedo',area:'Producción',capacitacion:'Seguridad Industrial',capId:'CAP-001',fecha:'2025-06-10',hora:'08:22',estado:'Válido'},
-  {id:3,codigo:'EMP-003',cedula:'7654321098',nombre:'Jorge Luis Peña',area:'Logística',capacitacion:'Manejo de Montacargas',capId:'CAP-002',fecha:'2025-06-11',hora:'14:05',estado:'Válido'},
-];
+// ============================================================
+// PERSISTENCIA
+// ============================================================
+function saveData() {
+  try {
+    localStorage.setItem('cia_emp', JSON.stringify(empleados));
+    localStorage.setItem('cia_cap', JSON.stringify(capacitaciones));
+    localStorage.setItem('cia_asi', JSON.stringify(asistencias));
+    localStorage.setItem('cia_rec', String(asistRechazados));
+    localStorage.setItem('cia_nid', String(nextAsistId));
+  } catch(e) {}
+}
 
-let asistRechazados = 0;
-let nextAsistId = 10;
-let pendingImport = null; // staged CSV rows
-let currentQRCapId = null;
+function loadData() {
+  try {
+    var e = localStorage.getItem('cia_emp');
+    var c = localStorage.getItem('cia_cap');
+    var a = localStorage.getItem('cia_asi');
+    var r = localStorage.getItem('cia_rec');
+    var n = localStorage.getItem('cia_nid');
+    if(e) empleados      = JSON.parse(e);
+    if(c) capacitaciones = JSON.parse(c);
+    if(a) asistencias    = JSON.parse(a);
+    if(r) asistRechazados = parseInt(r) || 0;
+    if(n) nextAsistId    = parseInt(n) || 1;
+  } catch(e) {}
+}
 
 // ============================================================
 // UTILS
 // ============================================================
-const $ = id => document.getElementById(id);
-const today = () => new Date().toISOString().slice(0,10);
-const timeNow = () => new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
-const fmt = f => { if(!f) return ''; const [y,m,d]=f.split('-'); return `${d}/${m}/${y}`; };
+function gid(id){ return document.getElementById(id); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function timeNow(){ return new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}); }
+function fmt(f){ if(!f) return ''; var p=f.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
 
-function setToday() {
-  const d = new Date();
-  $('today-badge').textContent = d.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+function setToday(){
+  var d = new Date();
+  gid('today-badge').textContent = d.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
 }
 
 // ============================================================
-// NAVIGATION
+// NAVEGACIÓN
 // ============================================================
-const titles = {dashboard:'Dashboard Ejecutivo',empleados:'Base Maestra de Empleados',
-  capacitaciones:'Gestión de Capacitaciones',asistencia:'Registro de Asistencia',nomina:'Reporte para Nómina'};
+var titles = {dashboard:'Dashboard Ejecutivo',empleados:'Base Maestra de Empleados',capacitaciones:'Gestión de Capacitaciones',asistencia:'Registro de Asistencia',nomina:'Reporte para Nómina'};
 
-document.querySelectorAll('.nav-item').forEach(item => {
-  item.addEventListener('click', () => {
-    const p = item.dataset.page;
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+document.querySelectorAll('.nav-item').forEach(function(item){
+  item.addEventListener('click', function(){
+    var p = item.dataset.page;
+    document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
     item.classList.add('active');
-    document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));
-    $('page-'+p).classList.add('active');
-    $('page-title').textContent = titles[p];
+    document.querySelectorAll('.page').forEach(function(pg){ pg.classList.remove('active'); });
+    gid('page-'+p).classList.add('active');
+    gid('page-title').textContent = titles[p];
     refreshPage(p);
-    if(window.innerWidth<=700) $('sidebar').classList.remove('open');
+    if(window.innerWidth<=700) gid('sidebar').classList.remove('open');
   });
 });
 
-$('ham').addEventListener('click', ()=> $('sidebar').classList.toggle('open'));
+gid('ham').addEventListener('click', function(){ gid('sidebar').classList.toggle('open'); });
 
-function refreshPage(p) {
+function refreshPage(p){
   if(p==='dashboard') renderDashboard();
-  if(p==='empleados') { populateAreaFilters(); renderEmpleados(); }
-  if(p==='capacitaciones') { populateAreaFilters(); renderCapacitaciones(); }
-  if(p==='asistencia') renderAsistencia();
-  if(p==='nomina') { populateAreaFilters(); renderNomina(); }
+  if(p==='empleados'){ populateFilters(); renderEmpleados(); }
+  if(p==='capacitaciones'){ renderCapacitaciones(); }
+  if(p==='asistencia') renderAsistencia(null);
+  if(p==='nomina'){ populateFilters(); renderNomina(); }
 }
 
-function navTo(page, params={}) {
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelector(`[data-page="${page}"]`).classList.add('active');
-  document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));
-  $('page-'+page).classList.add('active');
-  $('page-title').textContent = titles[page];
-  if(page==='asistencia') renderAsistencia(params.capId);
+function navTo(page, params){
+  params = params || {};
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  document.querySelector('[data-page="'+page+'"]').classList.add('active');
+  document.querySelectorAll('.page').forEach(function(pg){ pg.classList.remove('active'); });
+  gid('page-'+page).classList.add('active');
+  gid('page-title').textContent = titles[page];
+  if(page==='asistencia') renderAsistencia(params.capId || null);
 }
 
 // ============================================================
-// QR — detect ?cap= on load
+// QR PARAM
 // ============================================================
-function checkQRParam() {
+function checkQRParam(){
+  var capId = null;
   try {
-    const url = new URL(window.location.href);
-    const cap = url.searchParams.get('cap');
-    if(cap) navTo('asistencia', {capId: cap});
-  } catch(e) {
-    // inside iframe, try hash fallback
-    const hash = window.location.hash;
-    const m = hash.match(/cap=([^&]+)/);
-    if(m) navTo('asistencia', {capId: decodeURIComponent(m[1])});
+    var url = new URL(window.location.href);
+    capId = url.searchParams.get('cap');
+  } catch(e){}
+  if(!capId){
+    var m = window.location.hash.match(/cap=([^&]+)/);
+    if(m) capId = decodeURIComponent(m[1]);
   }
+  if(capId){
+    // Activar modo kiosco: solo muestra registro
+    document.body.classList.add('kiosco');
+    // Ocultar todas las páginas excepto asistencia
+    document.querySelectorAll('.page').forEach(function(pg){ pg.classList.remove('active'); });
+    gid('page-asistencia').classList.add('active');
+    // Agregar logo encima del formulario
+    var box = gid('page-asistencia').querySelector('.asist-box');
+    if(box && !gid('kiosco-logo-el')){
+      var logo = document.createElement('div');
+      logo.id = 'kiosco-logo-el';
+      logo.className = 'kiosco-logo';
+      logo.innerHTML = '<h1>🎓 CAPACITA IA</h1><p>Registro de Asistencia</p>';
+      box.insertBefore(logo, box.firstChild);
+    }
+    renderAsistencia(capId);
+  }
+}
+
+window.addEventListener('hashchange', function(){
+  var m = window.location.hash.match(/cap=([^&]+)/);
+  if(m) navTo('asistencia', {capId: decodeURIComponent(m[1])});
+});
+
+// ============================================================
+// FILTERS
+// ============================================================
+function populateFilters(){
+  var areas = [];
+  empleados.forEach(function(e){ if(areas.indexOf(e.area)===-1) areas.push(e.area); });
+  areas.sort();
+
+  ['emp-area','nom-area-filter'].forEach(function(id){
+    var sel = gid(id); if(!sel) return;
+    var prev = sel.value;
+    sel.innerHTML = '<option value="">Todas</option>';
+    areas.forEach(function(a){ sel.innerHTML += '<option value="'+a+'">'+a+'</option>'; });
+    if(prev) sel.value = prev;
+  });
+}
+
+function updateCapSelects(){
+  ['asist-cap','nom-cap-filter'].forEach(function(id){
+    var sel = gid(id); if(!sel) return;
+    var prev = sel.value;
+    sel.innerHTML = id==='nom-cap-filter' ? '<option value="">Todas</option>' : '';
+    capacitaciones.forEach(function(c){
+      sel.innerHTML += '<option value="'+c.id+'">'+c.nombre+' ('+fmt(c.fecha)+')</option>';
+    });
+    if(prev) sel.value = prev;
+  });
 }
 
 // ============================================================
 // DASHBOARD
 // ============================================================
-function renderDashboard() {
-  const total = asistencias.length;
-  const hoy = asistencias.filter(a=>a.fecha===today()).length;
-  $('kpi-grid').innerHTML = `
-    <div class="kpi-card blue"><div class="kpi-ico">📅</div><div class="kpi-val">${capacitaciones.length}</div><div class="kpi-lbl">Total Capacitaciones</div></div>
-    <div class="kpi-card green"><div class="kpi-ico">👥</div><div class="kpi-val">${empleados.filter(e=>e.estado==='Activo').length}</div><div class="kpi-lbl">Empleados Activos</div></div>
-    <div class="kpi-card cyan"><div class="kpi-ico">✅</div><div class="kpi-val">${total}</div><div class="kpi-lbl">Registros Válidos</div></div>
-    <div class="kpi-card red"><div class="kpi-ico">❌</div><div class="kpi-val">${asistRechazados}</div><div class="kpi-lbl">Registros Rechazados</div></div>
-    <div class="kpi-card orange"><div class="kpi-ico">📌</div><div class="kpi-val">${hoy}</div><div class="kpi-lbl">Registros Hoy</div></div>
-  `;
-  // Bar chart
-  const ac = {};
-  AREAS.forEach(a=>ac[a]=0);
-  asistencias.forEach(a=>{ if(ac[a.area]!==undefined) ac[a.area]++; });
-  const maxV = Math.max(...Object.values(ac),1);
-  const sorted = Object.entries(ac).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
-  $('area-chart').innerHTML = sorted.length ? sorted.map(([area,cnt])=>`
-    <div class="bar-row">
-      <div class="bar-label">${area}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${cnt/maxV*100}%">${cnt}</div></div>
-      <div class="bar-count">${cnt}</div>
-    </div>`).join('') : '<p style="font-size:.85rem;color:var(--txt2)">Sin datos aún.</p>';
-  // Recent
-  const last = [...asistencias].reverse().slice(0,5);
-  $('recent-table').innerHTML = `<table><tr><th>Nombre</th><th>Área</th><th>Capacitación</th><th>Hora</th></tr>
-    ${last.map(a=>`<tr><td>${a.nombre}</td><td>${a.area}</td><td>${a.capacitacion}</td><td>${a.hora}</td></tr>`).join('')}</table>`;
-  // Caps list
-  $('caps-list').innerHTML = capacitaciones.slice(-4).map(c=>`
-    <div style="padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
-      <div style="font-weight:600;font-size:.88rem">${c.nombre}</div>
-      <div style="font-size:.78rem;color:var(--txt2)">${fmt(c.fecha)} · ${c.hinicio}–${c.hfin} · ${c.responsable}</div>
-      <div style="margin-top:4px"><span class="bs bs-ok">${c.area}</span></div>
-    </div>`).join('');
-}
+function renderDashboard(){
+  // Aviso si no hay empleados cargados
+  if(empleados.length <= 5){
+    gid('kpi-grid').innerHTML =
+      '<div style="grid-column:1/-1" class="alert al-war">⚠️ <strong>Base de empleados vacía.</strong> Ve a <strong>Base de Empleados</strong> e importa tu archivo CSV antes de usar la app.</div>';
+  }
+  if(empleados.length <= 5) return;
+  var hoy = asistencias.filter(function(a){ return a.fecha===today(); }).length;
+  gid('kpi-grid').innerHTML =
+    '<div class="kpi-card blue"><div class="kpi-ico">📅</div><div class="kpi-val">'+capacitaciones.length+'</div><div class="kpi-lbl">Total Capacitaciones</div></div>'+
+    '<div class="kpi-card green"><div class="kpi-ico">👥</div><div class="kpi-val">'+empleados.filter(function(e){return e.estado==='Activo';}).length+'</div><div class="kpi-lbl">Empleados Activos</div></div>'+
+    '<div class="kpi-card cyan"><div class="kpi-ico">✅</div><div class="kpi-val">'+asistencias.length+'</div><div class="kpi-lbl">Registros Válidos</div></div>'+
+    '<div class="kpi-card red"><div class="kpi-ico">❌</div><div class="kpi-val">'+asistRechazados+'</div><div class="kpi-lbl">Registros Rechazados</div></div>'+
+    '<div class="kpi-card orange"><div class="kpi-ico">📌</div><div class="kpi-val">'+hoy+'</div><div class="kpi-lbl">Registros Hoy</div></div>';
 
-// ============================================================
-// AREA FILTER POPULATION
-// ============================================================
-function populateAreaFilters() {
-  // Derive areas from current employee set
-  const uniqueAreas = [...new Set(empleados.map(e=>e.area))].sort();
+  var ac = {};
+  AREAS.forEach(function(a){ ac[a]=0; });
+  asistencias.forEach(function(a){ if(ac[a.area]!==undefined) ac[a.area]++; });
+  var maxV = 1;
+  Object.keys(ac).forEach(function(k){ if(ac[k]>maxV) maxV=ac[k]; });
+  var sorted = Object.keys(ac).filter(function(k){ return ac[k]>0; }).sort(function(a,b){ return ac[b]-ac[a]; });
+  gid('area-chart').innerHTML = sorted.length ? sorted.map(function(area){
+    return '<div class="bar-row"><div class="bar-label">'+area+'</div><div class="bar-track"><div class="bar-fill" style="width:'+(ac[area]/maxV*100)+'%">'+ac[area]+'</div></div><div class="bar-count">'+ac[area]+'</div></div>';
+  }).join('') : '<p style="font-size:.85rem;color:var(--txt2)">Sin datos aún.</p>';
 
-  [['emp-area',false],['cap-area',false],['nom-area-filter',true]].forEach(([id, withAll]) => {
-    const sel = $(id); if(!sel) return;
-    const prev = sel.value;
-    sel.innerHTML = withAll ? '<option value="">Todas</option>' : '';
-    uniqueAreas.forEach(a=>{ const o=document.createElement('option'); o.value=a; o.textContent=a; sel.appendChild(o); });
-    if(prev && [...sel.options].some(o=>o.value===prev)) sel.value=prev;
-  });
+  var last = asistencias.slice(-5).reverse();
+  gid('recent-table').innerHTML = '<table><tr><th>Nombre</th><th>Área</th><th>Capacitación</th><th>Hora</th></tr>'+
+    last.map(function(a){ return '<tr><td>'+a.nombre+'</td><td>'+a.area+'</td><td>'+a.capacitacion+'</td><td>'+a.hora+'</td></tr>'; }).join('')+'</table>';
+
+  gid('caps-list').innerHTML = capacitaciones.slice(-4).map(function(c){
+    return '<div style="padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px"><div style="font-weight:600;font-size:.88rem">'+c.nombre+'</div><div style="font-size:.78rem;color:var(--txt2)">'+fmt(c.fecha)+' · '+c.hinicio+'–'+c.hfin+' · '+c.responsable+'</div></div>';
+  }).join('');
 }
 
 // ============================================================
 // EMPLEADOS
 // ============================================================
-function renderEmpleados() {
-  const q = ($('emp-search').value||'').toLowerCase();
-  const area = $('emp-area').value;
-  const est = $('emp-estado').value;
-  const f = empleados.filter(e=>
-    (!q||e.nombre.toLowerCase().includes(q)||e.cedula.includes(q)||e.codigo.toLowerCase().includes(q))&&
-    (!area||e.area===area)&&(!est||e.estado===est));
-  $('emp-count').textContent = `${f.length} de ${empleados.length} empleados`;
-  $('emp-table').innerHTML = `<table>
-    <tr><th>Código</th><th>Cédula</th><th>Nombre</th><th>Área</th><th>Cargo</th><th>Estado</th></tr>
-    ${f.map(e=>`<tr>
-      <td><strong>${e.codigo}</strong></td><td>${e.cedula}</td><td>${e.nombre}</td>
-      <td>${e.area}</td><td>${e.cargo}</td>
-      <td><span class="bs ${e.estado==='Activo'?'bs-a':'bs-i'}">${e.estado}</span></td>
-    </tr>`).join('')}</table>`;
+function renderEmpleados(){
+  var q = (gid('emp-search').value||'').toLowerCase();
+  var area = gid('emp-area').value;
+  var est = gid('emp-estado').value;
+  var f = empleados.filter(function(e){
+    return (!q||e.nombre.toLowerCase().includes(q)||e.cedula.includes(q)||e.codigo.toLowerCase().includes(q))&&(!area||e.area===area)&&(!est||e.estado===est);
+  });
+  gid('emp-count').textContent = f.length+' de '+empleados.length+' empleados';
+  gid('emp-table').innerHTML = '<table><tr><th>Código</th><th>Cédula</th><th>Nombre</th><th>Área</th><th>Cargo</th><th>Estado</th></tr>'+
+    f.map(function(e){
+      return '<tr><td><strong>'+e.codigo+'</strong></td><td>'+e.cedula+'</td><td>'+e.nombre+'</td><td>'+e.area+'</td><td>'+e.cargo+'</td><td><span class="bs '+(e.estado==='Activo'?'bs-a':'bs-i')+'">'+e.estado+'</span></td></tr>';
+    }).join('')+'</table>';
 }
 
 // ============================================================
 // CSV IMPORT
 // ============================================================
-const REQ_COLS = ['codigo_interno','cedula','nombre','area','cargo','estado'];
+var REQ_COLS = ['codigo_interno','cedula','nombre','area','cargo','estado'];
 
-function handleCSV(file) {
-  if(!file) return;
-  showImpStatus('info', `⏳ Leyendo archivo: <strong>${file.name}</strong>…`);
-  const reader = new FileReader();
-  reader.onload = e => parseCSV(e.target.result);
-  reader.onerror = () => showImpStatus('dan', '❌ Error al leer el archivo. Intenta de nuevo.');
-  reader.readAsText(file, 'UTF-8');
-}
-
-// File input listener (attached in JS, not inline, for iframe compatibility)
-const csvInput = $('csv-file-input');
-csvInput.addEventListener('change', function() {
+gid('csv-file-input').addEventListener('change', function(){
   if(this.files && this.files[0]) handleCSV(this.files[0]);
 });
 
-// Drag & drop on the label
-const dz = $('drop-zone');
-dz.addEventListener('dragover', e=>{ e.preventDefault(); dz.classList.add('drag'); });
-dz.addEventListener('dragleave', ()=> dz.classList.remove('drag'));
-dz.addEventListener('drop', e=>{
+var dz = gid('drop-zone');
+dz.addEventListener('dragover', function(e){ e.preventDefault(); dz.classList.add('drag'); });
+dz.addEventListener('dragleave', function(){ dz.classList.remove('drag'); });
+dz.addEventListener('drop', function(e){
   e.preventDefault(); dz.classList.remove('drag');
-  const f = e.dataTransfer.files[0];
+  var f = e.dataTransfer.files[0];
   if(f) handleCSV(f);
 });
 
-function parseCSV(text) {
-  // Normalize: BOM, CRLF, encoding issues
+function handleCSV(file){
+  showImpStatus('info','⏳ Leyendo: <strong>'+file.name+'</strong>…');
+  var reader = new FileReader();
+  reader.onload = function(e){ parseCSV(e.target.result); };
+  reader.onerror = function(){ showImpStatus('dan','❌ Error al leer el archivo.'); };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function parseCSV(text){
   text = text.replace(/^\uFEFF/,'').replace(/\r\n/g,'\n').replace(/\r/g,'\n');
-  const lines = text.split('\n').filter(l=>l.trim());
-  if(lines.length < 2) { showImpStatus('dan','⚠️ El archivo está vacío o solo tiene encabezado.'); return; }
+  var lines = text.split('\n').filter(function(l){ return l.trim(); });
+  if(lines.length < 2){ showImpStatus('dan','⚠️ Archivo vacío.'); return; }
 
-  // Detect delimiter: prefer ; (your real file uses ;)
-  const firstLine = lines[0];
-  const delim = (firstLine.match(/;/g)||[]).length >= (firstLine.match(/,/g)||[]).length ? ';' : ',';
+  var first = lines[0];
+  var delim = (first.match(/;/g)||[]).length >= (first.match(/,/g)||[]).length ? ';' : ',';
+  var headers = first.split(delim).map(function(h){ return h.trim().toLowerCase().replace(/['"]/g,'').replace(/^\uFEFF/,''); });
 
-  // Normalize headers: lowercase, trim, remove BOM/quotes
-  const headers = firstLine.split(delim).map(h=>h.trim().toLowerCase().replace(/['"]/g,'').replace(/^\uFEFF/,''));
+  var missing = REQ_COLS.filter(function(c){ return headers.indexOf(c)===-1; });
+  if(missing.length){ showImpStatus('dan','❌ Faltan columnas: <strong>'+missing.join(', ')+'</strong>'); return; }
 
-  // Check required columns
-  const missing = REQ_COLS.filter(c=>!headers.includes(c));
-  if(missing.length) {
-    showImpStatus('dan',`❌ Faltan columnas: <strong>${missing.join(', ')}</strong>.<br>Columnas encontradas: <em>${headers.join(', ')}</em>`);
-    return;
-  }
-
-  const idx = col => headers.indexOf(col);
-
-  // Estado normalization: handles A/I, Activo/Inactivo, ACTIVO/INACTIVO, 1/0
-  function normalizeEstado(v) {
-    const s = (v||'').trim().toUpperCase();
-    if(['A','ACTIVO','1','SI','S','TRUE'].includes(s)) return 'Activo';
-    if(['I','INACTIVO','0','NO','N','FALSE'].includes(s)) return 'Inactivo';
+  function normalizeEstado(v){
+    var s = (v||'').trim().toUpperCase();
+    if(['A','ACTIVO','1','SI','S','TRUE'].indexOf(s)!==-1) return 'Activo';
+    if(['I','INACTIVO','0','NO','N','FALSE'].indexOf(s)!==-1) return 'Inactivo';
     return null;
   }
 
-  const rows = []; const errs = [];
-  for(let i=1;i<lines.length;i++) {
-    const raw = lines[i].trim();
+  var rows = [], errs = [];
+  for(var i=1; i<lines.length; i++){
+    var raw = lines[i].trim();
     if(!raw) continue;
-    const cells = splitCSVLine(raw, delim);
-    const get = col => {
-      const ci = idx(col);
-      return ci >= 0 ? (cells[ci]||'').replace(/^["'\s]+|["'\s]+$/g,'') : '';
-    };
-    const estadoRaw = get('estado');
-    const estadoNorm = normalizeEstado(estadoRaw);
-    const emp = {
-      codigo: get('codigo_interno'),
-      cedula:  get('cedula'),
-      nombre:  get('nombre'),
-      area:    get('area'),
-      cargo:   get('cargo'),
-      estado:  estadoNorm || estadoRaw
-    };
-    const rowErrors = [];
+    var cells = splitLine(raw, delim);
+    function getCell(col){
+      var ci = headers.indexOf(col);
+      return ci>=0 ? (cells[ci]||'').replace(/^["'\s]+|["'\s]+$/g,'') : '';
+    }
+    var estadoRaw = getCell('estado');
+    var estadoNorm = normalizeEstado(estadoRaw);
+    var emp = { codigo:getCell('codigo_interno'), cedula:getCell('cedula'), nombre:getCell('nombre'), area:getCell('area'), cargo:getCell('cargo'), estado:estadoNorm||estadoRaw };
+    var rowErrors = [];
     if(!emp.codigo) rowErrors.push('código vacío');
     if(!emp.cedula)  rowErrors.push('cédula vacía');
     if(!emp.nombre)  rowErrors.push('nombre vacío');
-    if(!estadoNorm)  rowErrors.push(`estado no reconocido: "${estadoRaw}" (use A/I o Activo/Inactivo)`);
-    if(rowErrors.length) { errs.push(`Fila ${i+1} (${emp.nombre||emp.codigo||'?'}): ${rowErrors.join(', ')}`); continue; }
+    if(!estadoNorm)  rowErrors.push('estado no reconocido: "'+estadoRaw+'"');
+    if(rowErrors.length){ errs.push('Fila '+(i+1)+' ('+emp.nombre+'): '+rowErrors.join(', ')); continue; }
     rows.push(emp);
   }
 
-  if(!rows.length) { showImpStatus('dan','❌ No se encontraron filas válidas. Revisa el archivo.'); return; }
-
+  if(!rows.length){ showImpStatus('dan','❌ No se encontraron filas válidas.'); return; }
   pendingImport = rows;
   renderImportPreview(rows, errs);
 }
 
-function splitCSVLine(line, delim) {
-  // Handle quoted fields
-  const cells = []; let cur=''; let inQ=false;
-  for(let i=0;i<line.length;i++){
-    const ch=line[i];
+function splitLine(line, delim){
+  var cells=[],cur='',inQ=false;
+  for(var i=0;i<line.length;i++){
+    var ch=line[i];
     if(ch==='"'){ inQ=!inQ; }
     else if(ch===delim&&!inQ){ cells.push(cur); cur=''; }
     else cur+=ch;
@@ -649,276 +541,211 @@ function splitCSVLine(line, delim) {
   return cells;
 }
 
-function renderImportPreview(rows, errs) {
-  const ia = $('imp-actions');
-  ia.style.display = 'flex';
-  $('imp-preview').innerHTML = `
-    <div class="al-info alert" style="margin-bottom:10px">
-      ✅ <strong>${rows.length} registros válidos</strong> listos para importar.
-      ${errs.length ? `&nbsp;·&nbsp; ⚠️ ${errs.length} filas omitidas.` : ''}
-    </div>
-    <div class="import-preview">
-      ${rows.slice(0,8).map(r=>`
-        <div class="imp-row ok">
-          <span style="font-weight:600;min-width:90px">${r.codigo}</span>
-          <span style="min-width:110px">${r.cedula}</span>
-          <span style="flex:1">${r.nombre}</span>
-          <span class="bs ${r.estado==='Activo'?'bs-a':'bs-i'}">${r.estado}</span>
-        </div>`).join('')}
-      ${rows.length>8?`<div class="imp-row" style="justify-content:center;color:var(--txt2)">… y ${rows.length-8} más</div>`:''}
-      ${errs.slice(0,3).map(e=>`<div class="imp-row error">⚠️ ${e}</div>`).join('')}
-    </div>`;
-  $('imp-confirm-btn').onclick = confirmImport;
+function renderImportPreview(rows, errs){
+  gid('imp-actions').style.display='flex';
+  gid('imp-preview').innerHTML =
+    '<div class="alert al-info" style="margin-bottom:10px">✅ <strong>'+rows.length+' registros válidos</strong> listos para importar.'+(errs.length?' &nbsp;·&nbsp; ⚠️ '+errs.length+' filas omitidas.':'')+'</div>'+
+    '<div class="import-preview">'+
+    rows.slice(0,8).map(function(r){
+      return '<div class="imp-row ok"><span style="font-weight:600;min-width:80px">'+r.codigo+'</span><span style="min-width:110px">'+r.cedula+'</span><span style="flex:1">'+r.nombre+'</span><span class="bs '+(r.estado==='Activo'?'bs-a':'bs-i')+'">'+r.estado+'</span></div>';
+    }).join('')+
+    (rows.length>8?'<div class="imp-row" style="justify-content:center;color:var(--txt2)">… y '+(rows.length-8)+' más</div>':'')+
+    errs.slice(0,3).map(function(e){ return '<div class="imp-row error">⚠️ '+e+'</div>'; }).join('')+
+    '</div>';
+  gid('imp-confirm-btn').onclick = confirmImport;
 }
 
-function confirmImport() {
+function confirmImport(){
   if(!pendingImport) return;
   empleados = pendingImport;
   pendingImport = null;
-  $('imp-preview').innerHTML = '';
-  $('imp-actions').style.display = 'none';
-  populateAreaFilters();
+  gid('imp-preview').innerHTML='';
+  gid('imp-actions').style.display='none';
+  populateFilters();
   renderEmpleados();
-  showImpStatus('suc',`✅ Planta de personal actualizada con <strong>${empleados.length} empleados</strong>. La base ya está activa para validación de asistencia.`);
+  saveData();
+  showImpStatus('suc','✅ Planta actualizada con <strong>'+empleados.length+' empleados</strong>. Base activa para validación.');
   updateCapSelects();
 }
 
-function cancelImport() {
-  pendingImport = null;
-  $('imp-preview').innerHTML = '';
-  $('imp-actions').style.display = 'none';
+function cancelImport(){
+  pendingImport=null;
+  gid('imp-preview').innerHTML='';
+  gid('imp-actions').style.display='none';
   showImpStatus('war','Importación cancelada.');
 }
 
-function showImpStatus(type, msg) {
-  $('imp-status').innerHTML = `<div class="alert al-${type}">${msg}</div>`;
-  if(type!=='suc') setTimeout(()=>{ $('imp-status').innerHTML=''; }, 5000);
+function showImpStatus(type, msg){
+  gid('imp-status').innerHTML='<div class="alert al-'+type+'">'+msg+'</div>';
+  if(type!=='suc') setTimeout(function(){ gid('imp-status').innerHTML=''; },5000);
 }
 
 // ============================================================
 // CAPACITACIONES
 // ============================================================
-function renderCapacitaciones() {
-  $('cap-table').innerHTML = `<table>
-    <tr><th>ID</th><th>Nombre</th><th>Fecha</th><th>Hora</th><th>Responsable</th><th>Área</th><th>Asistentes</th><th>QR</th></tr>
-    ${capacitaciones.map(c=>{
-      const cnt = asistencias.filter(a=>a.capId===c.id).length;
-      return `<tr>
-        <td><strong>${c.id}</strong></td><td>${c.nombre}</td><td>${fmt(c.fecha)}</td>
-        <td>${c.hinicio}–${c.hfin}</td><td>${c.responsable}</td><td>${c.area}</td>
-        <td><span class="bs bs-ok">${cnt}</span></td>
-        <td>
-          <button class="btn btn-pur btn-sm" onclick="generarQR('${c.id}')">🔳 Generar QR</button>
-        </td>
-      </tr>`;
-    }).join('')}</table>`;
+function renderCapacitaciones(){
+  gid('cap-table').innerHTML = '<table><tr><th>ID</th><th>Nombre</th><th>Fecha</th><th>Hora</th><th>Responsable</th><th>Asistentes</th><th>QR</th></tr>'+
+    capacitaciones.map(function(c){
+      var cnt = asistencias.filter(function(a){ return a.capId===c.id; }).length;
+      return '<tr><td><strong>'+c.id+'</strong></td><td>'+c.nombre+'</td><td>'+fmt(c.fecha)+'</td><td>'+c.hinicio+'–'+c.hfin+'</td><td>'+c.responsable+'</td><td><span class="bs bs-ok">'+cnt+'</span></td><td><button class="btn btn-pur btn-sm" onclick="generarQR(\''+c.id+'\')">🔳 QR</button></td></tr>';
+    }).join('')+'</table>';
 }
 
-function crearCapacitacion() {
-  const n  = $('cap-nombre').value.trim();
-  const f  = $('cap-fecha').value;
-  const hi = $('cap-hinicio').value;
-  const hf = $('cap-hfin').value;
-  const r  = $('cap-resp').value.trim();
-  const a  = 'Abierta';
-  const faltantes = [];
-  if(!n)  faltantes.push('Nombre');
-  if(!f)  faltantes.push('Fecha');
+function crearCapacitacion(){
+  var n=gid('cap-nombre').value.trim(), f=gid('cap-fecha').value,
+      hi=gid('cap-hinicio').value, hf=gid('cap-hfin').value,
+      r=gid('cap-resp').value.trim();
+  var faltantes=[];
+  if(!n) faltantes.push('Nombre');
+  if(!f) faltantes.push('Fecha');
   if(!hi) faltantes.push('Hora Inicio');
   if(!hf) faltantes.push('Hora Fin');
-  if(!r)  faltantes.push('Responsable');
-  if(faltantes.length){
-    $('cap-alert').innerHTML=`<div class="alert al-war">⚠️ Faltan campos: <strong>${faltantes.join(', ')}</strong>.</div>`; return;
-  }
-  if(hi>=hf){ $('cap-alert').innerHTML=`<div class="alert al-dan">❌ Hora fin debe ser mayor a hora inicio.</div>`; return; }
-  const id='CAP-'+String(capacitaciones.length+1).padStart(3,'0');
-  capacitaciones.push({id,nombre:n,fecha:f,hinicio:hi,hfin:hf,responsable:r,area:a});
+  if(!r) faltantes.push('Responsable');
+  if(faltantes.length){ gid('cap-alert').innerHTML='<div class="alert al-war">⚠️ Faltan: <strong>'+faltantes.join(', ')+'</strong></div>'; return; }
+  if(hi>=hf){ gid('cap-alert').innerHTML='<div class="alert al-dan">❌ Hora fin debe ser mayor a hora inicio.</div>'; return; }
+  var id='CAP-'+String(capacitaciones.length+1).padStart(3,'0');
+  capacitaciones.push({id:id,nombre:n,fecha:f,hinicio:hi,hfin:hf,responsable:r,area:'Abierta'});
   updateCapSelects();
-  $('cap-alert').innerHTML=`<div class="alert al-suc">✅ Capacitación "<strong>${n}</strong>" creada — ID: ${id}</div>`;
-  ['cap-nombre','cap-fecha','cap-hinicio','cap-hfin','cap-resp'].forEach(id=>$(id).value='');
+  saveData();
+  gid('cap-alert').innerHTML='<div class="alert al-suc">✅ Capacitación "<strong>'+n+'</strong>" creada — ID: '+id+'</div>';
+  ['cap-nombre','cap-fecha','cap-hinicio','cap-hfin','cap-resp'].forEach(function(id){ gid(id).value=''; });
   renderCapacitaciones();
-  setTimeout(()=>{ $('cap-alert').innerHTML=''; },4000);
+  setTimeout(function(){ gid('cap-alert').innerHTML=''; },4000);
+}
+
+function borrarCapacitaciones(){
+  if(!confirm('¿Eliminar TODAS las capacitaciones y asistencias? Esta acción no se puede deshacer.')) return;
+  capacitaciones=[];
+  asistencias=[];
+  asistRechazados=0;
+  nextAsistId=1;
+  saveData();
+  updateCapSelects();
+  renderCapacitaciones();
+  renderDashboard();
+  alert('✅ Historial eliminado.');
 }
 
 // ============================================================
-// QR GENERATION
+// QR
 // ============================================================
-function generarQR(capId) {
-  const cap = capacitaciones.find(c=>c.id===capId);
+function generarQR(capId){
+  var cap = capacitaciones.find(function(c){ return c.id===capId; });
   if(!cap) return;
   currentQRCapId = capId;
-
-  // Build deep-link: use current page URL + hash param (works inside iframe/artifact)
-  let base = window.location.href.split('?')[0].split('#')[0];
-  // For artifact environment, use a recognizable hash-based URL
-  const qrURL = `${base}#cap=${encodeURIComponent(capId)}`;
-
-  $('qr-modal-title').textContent = `🔳 QR — ${cap.nombre}`;
-  $('qr-modal-info').innerHTML = `
-    <strong>${cap.nombre}</strong> · ${fmt(cap.fecha)} · ${cap.hinicio}–${cap.hfin}<br>
-    Responsable: ${cap.responsable} · Área: ${cap.area}`;
-  $('qr-link-display').textContent = qrURL;
-  $('qr-canvas-wrap').innerHTML = '';
-
-  // Generate QR
-  new QRCode($('qr-canvas-wrap'), {
-    text: qrURL,
-    width: 220, height: 220,
-    colorDark: '#1a3a5c', colorLight: '#ffffff',
-    correctLevel: QRCode.CorrectLevel.M
-  });
-
-  $('qr-modal').classList.add('open');
+  var base = window.location.href.split('?')[0].split('#')[0];
+  var qrURL = base+'?cap='+encodeURIComponent(capId);
+  gid('qr-modal-title').textContent = '🔳 QR — '+cap.nombre;
+  gid('qr-modal-info').innerHTML = '<strong>'+cap.nombre+'</strong> · '+fmt(cap.fecha)+' · '+cap.hinicio+'–'+cap.hfin+'<br>Responsable: '+cap.responsable;
+  gid('qr-link-display').textContent = qrURL;
+  gid('qr-canvas-wrap').innerHTML='';
+  new QRCode(gid('qr-canvas-wrap'),{text:qrURL,width:220,height:220,colorDark:'#1a3a5c',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  gid('qr-modal').classList.add('open');
 }
 
-function downloadQR() {
-  setTimeout(()=>{
-    const canvas = $('qr-canvas-wrap').querySelector('canvas');
-    if(!canvas){ alert('No se puede descargar en este entorno. Haz una captura de pantalla.'); return; }
-    const cap = capacitaciones.find(c=>c.id===currentQRCapId);
-    const a = document.createElement('a');
-    a.download = `QR_${cap?cap.nombre.replace(/\s+/g,'_'):'capacitacion'}.png`;
-    a.href = canvas.toDataURL('image/png');
+function downloadQR(){
+  setTimeout(function(){
+    var canvas = gid('qr-canvas-wrap').querySelector('canvas');
+    if(!canvas){ alert('Haz una captura de pantalla.'); return; }
+    var cap = capacitaciones.find(function(c){ return c.id===currentQRCapId; });
+    var a = document.createElement('a');
+    a.download='QR_'+(cap?cap.nombre.replace(/\s+/g,'_'):'capacitacion')+'.png';
+    a.href=canvas.toDataURL('image/png');
     a.click();
-  }, 100);
+  },100);
 }
 
-function closeQRModal() { $('qr-modal').classList.remove('open'); }
-
-// ============================================================
-// CAP SELECTS SYNC
-// ============================================================
-function updateCapSelects() {
-  [$('asist-cap'), $('nom-cap-filter')].forEach((sel,i)=>{
-    if(!sel) return;
-    const prev = sel.value;
-    sel.innerHTML = i===0 ? '' : '<option value="">Todas</option>';
-    capacitaciones.forEach(c=>{
-      const o=document.createElement('option');
-      o.value=c.id; o.textContent=`${c.nombre} (${fmt(c.fecha)})`;
-      sel.appendChild(o);
-    });
-    if(prev && [...sel.options].some(o=>o.value===prev)) sel.value=prev;
-  });
-}
+function closeQRModal(){ gid('qr-modal').classList.remove('open'); }
 
 // ============================================================
 // ASISTENCIA
 // ============================================================
-function renderAsistencia(preselCapId) {
+function renderAsistencia(preselCapId){
   updateCapSelects();
-  // Handle QR preselect
-  const banner = $('qr-presel-banner');
-  if(preselCapId) {
-    const cap = capacitaciones.find(c=>c.id===preselCapId);
-    if(cap) {
-      $('asist-cap').value = preselCapId;
-      banner.innerHTML = `<div class="qr-badge">🔳 Capacitación cargada desde QR: <strong>${cap.nombre}</strong></div>`;
-    } else {
-      banner.innerHTML = `<div class="alert al-war">⚠️ El QR escaneado no corresponde a ninguna capacitación activa.</div>`;
-    }
-  } else {
-    banner.innerHTML = '';
-  }
-
-  const hoy = asistencias.filter(a=>a.fecha===today());
-  $('asist-hoy-table').innerHTML = hoy.length===0
-    ? `<p style="font-size:.85rem;color:var(--txt2)">Sin registros hoy.</p>`
-    : `<table><tr><th>Código</th><th>Nombre</th><th>Área</th><th>Capacitación</th><th>Hora</th></tr>
-       ${hoy.map(a=>`<tr><td>${a.codigo}</td><td>${a.nombre}</td><td>${a.area}</td><td>${a.capacitacion}</td><td>${a.hora}</td></tr>`).join('')}</table>`;
+  var banner = gid('qr-presel-banner');
+  if(preselCapId){
+    var cap = capacitaciones.find(function(c){ return c.id===preselCapId; });
+    if(cap){ gid('asist-cap').value=preselCapId; banner.innerHTML='<div class="qr-badge">🔳 Cargada desde QR: <strong>'+cap.nombre+'</strong></div>'; }
+    else banner.innerHTML='<div class="alert al-war">⚠️ QR no corresponde a una capacitación activa.</div>';
+  } else { banner.innerHTML=''; }
+  var hoy = asistencias.filter(function(a){ return a.fecha===today(); });
+  gid('asist-hoy-table').innerHTML = hoy.length===0
+    ? '<p style="font-size:.85rem;color:var(--txt2)">Sin registros hoy.</p>'
+    : '<table><tr><th>Código</th><th>Nombre</th><th>Área</th><th>Capacitación</th><th>Hora</th></tr>'+hoy.map(function(a){ return '<tr><td>'+a.codigo+'</td><td>'+a.nombre+'</td><td>'+a.area+'</td><td>'+a.capacitacion+'</td><td>'+a.hora+'</td></tr>'; }).join('')+'</table>';
 }
 
-function registrarAsistencia() {
-  const capId  = $('asist-cap').value;
-  const codigo = $('asist-codigo').value.trim().toUpperCase();
-  const cedula = $('asist-cedula').value.trim();
-  const res    = $('asist-result');
+function registrarAsistencia(){
+  var capId  = gid('asist-cap').value;
+  var codigo = gid('asist-codigo').value.trim();
+  var cedula = gid('asist-cedula').value.trim();
+  var res    = gid('asist-result');
 
-  if(!capId||!codigo||!cedula){
-    res.innerHTML=`<div class="asist-result fail"><div class="r-ico">⚠️</div><div class="r-name">Campos incompletos</div><div class="r-sub">Selecciona capacitación e ingresa código y cédula.</div></div>`;
-    return;
-  }
-  const cap = capacitaciones.find(c=>c.id===capId);
+  if(!capId||!codigo||!cedula){ res.innerHTML=failMsg('⚠️','Campos incompletos','Selecciona capacitación e ingresa código y cédula.'); return; }
 
-  const byCode = empleados.find(e=>e.codigo===codigo);
-  if(!byCode){ asistRechazados++; res.innerHTML=fail('❌','Código no encontrado',`El código "${codigo}" no existe en la base de empleados.`); return; }
+  var cap = capacitaciones.find(function(c){ return c.id===capId; });
+  var byCode = empleados.find(function(e){ return e.codigo===codigo; });
+  if(!byCode){ asistRechazados++; saveData(); res.innerHTML=failMsg('❌','Código no encontrado','El código "'+codigo+'" no existe en la base de empleados.'); return; }
 
-  const byCed = empleados.find(e=>e.cedula===cedula);
-  if(!byCed){ asistRechazados++; res.innerHTML=fail('❌','Cédula no encontrada',`La cédula "${cedula}" no existe en la base de empleados.`); return; }
+  var byCed = empleados.find(function(e){ return e.cedula===cedula; });
+  if(!byCed){ asistRechazados++; saveData(); res.innerHTML=failMsg('❌','Cédula no encontrada','La cédula "'+cedula+'" no existe en la base de empleados.'); return; }
 
-  if(byCode.codigo!==byCed.codigo){ asistRechazados++; res.innerHTML=fail('❌','Datos no coinciden','El código y la cédula no corresponden al mismo empleado.'); return; }
+  if(byCode.codigo!==byCed.codigo){ asistRechazados++; saveData(); res.innerHTML=failMsg('❌','Datos no coinciden','El código y la cédula no corresponden al mismo empleado.'); return; }
 
-  const emp = byCode;
-  if(emp.estado!=='Activo'){ asistRechazados++; res.innerHTML=fail('🚫','Empleado Inactivo',`${emp.nombre} se encuentra en estado Inactivo.`); return; }
+  var emp = byCode;
+  if(emp.estado!=='Activo'){ asistRechazados++; saveData(); res.innerHTML=failMsg('🚫','Empleado Inactivo',emp.nombre+' se encuentra en estado Inactivo.'); return; }
 
-  const dup = asistencias.find(a=>a.codigo===codigo&&a.capId===capId);
-  if(dup){ res.innerHTML=fail('🔁','Registro Duplicado',`${emp.nombre} ya fue registrado en esta capacitación a las ${dup.hora}.`); return; }
+  var dup = asistencias.find(function(a){ return a.codigo===codigo&&a.capId===capId; });
+  if(dup){ res.innerHTML=failMsg('🔁','Registro Duplicado',emp.nombre+' ya fue registrado en esta capacitación a las '+dup.hora+'.'); return; }
 
-  // ✅ SUCCESS
-  const fecha=today(), hora=timeNow();
-  asistencias.push({id:nextAsistId++,codigo:emp.codigo,cedula:emp.cedula,nombre:emp.nombre,
-    area:emp.area,capacitacion:cap.nombre,capId:cap.id,fecha,hora,estado:'Válido'});
+  var fecha=today(), hora=timeNow();
+  asistencias.push({id:nextAsistId++,codigo:emp.codigo,cedula:emp.cedula,nombre:emp.nombre,area:emp.area,capacitacion:cap.nombre,capId:cap.id,fecha:fecha,hora:hora,estado:'Válido'});
+  saveData();
 
-  res.innerHTML=`<div class="asist-result ok">
-    <div class="r-ico">✅</div>
-    <div class="r-name">${emp.nombre}</div>
-    <div class="r-sub">${emp.area} · ${emp.cargo}</div>
-    <div style="margin-top:10px;font-size:.82rem;color:#166534">
-      <strong>Registro exitoso</strong> · ${cap.nombre} · ${hora}
-    </div></div>`;
-  $('asist-codigo').value=''; $('asist-cedula').value='';
-  renderAsistencia();
-  setTimeout(()=>{ res.innerHTML=''; },5000);
+  res.innerHTML='<div class="asist-result ok"><div class="r-ico">✅</div><div class="r-name">'+emp.nombre+'</div><div class="r-sub">'+emp.area+' · '+emp.cargo+'</div><div style="margin-top:10px;font-size:.82rem;color:#166534"><strong>Registro exitoso</strong> · '+cap.nombre+' · '+hora+'</div></div>';
+  gid('asist-codigo').value='';
+  gid('asist-cedula').value='';
+  renderAsistencia(null);
+  setTimeout(function(){ res.innerHTML=''; },5000);
 }
 
-const fail = (ico,title,sub) =>
-  `<div class="asist-result fail"><div class="r-ico">${ico}</div><div class="r-name">${title}</div><div class="r-sub">${sub}</div></div>`;
+function failMsg(ico,title,sub){
+  return '<div class="asist-result fail"><div class="r-ico">'+ico+'</div><div class="r-name">'+title+'</div><div class="r-sub">'+sub+'</div></div>';
+}
 
 // ============================================================
 // NÓMINA
 // ============================================================
-function renderNomina() {
-  const capF=$('nom-cap-filter').value, fechaF=$('nom-fecha-filter').value, areaF=$('nom-area-filter').value;
-  const f=asistencias.filter(a=>(!capF||a.capId===capF)&&(!fechaF||a.fecha===fechaF)&&(!areaF||a.area===areaF));
-  $('nom-count').textContent=`${f.length} registros`;
-  $('nom-table').innerHTML=`<table>
-    <tr><th>#</th><th>Código</th><th>Cédula</th><th>Nombre</th><th>Área</th><th>Capacitación</th><th>Fecha</th><th>Hora</th><th>Estado</th></tr>
-    ${f.map((a,i)=>`<tr>
-      <td>${i+1}</td><td><strong>${a.codigo}</strong></td><td>${a.cedula}</td><td>${a.nombre}</td>
-      <td>${a.area}</td><td>${a.capacitacion}</td><td>${fmt(a.fecha)}</td><td>${a.hora}</td>
-      <td><span class="bs bs-a">${a.estado}</span></td>
-    </tr>`).join('')}</table>`;
+function renderNomina(){
+  var capF=gid('nom-cap-filter').value, fechaF=gid('nom-fecha-filter').value, areaF=gid('nom-area-filter').value;
+  var f=asistencias.filter(function(a){ return (!capF||a.capId===capF)&&(!fechaF||a.fecha===fechaF)&&(!areaF||a.area===areaF); });
+  gid('nom-count').textContent=f.length+' registros';
+  gid('nom-table').innerHTML='<table><tr><th>#</th><th>Código</th><th>Cédula</th><th>Nombre</th><th>Área</th><th>Capacitación</th><th>Fecha</th><th>Hora</th><th>Estado</th></tr>'+
+    f.map(function(a,i){ return '<tr><td>'+(i+1)+'</td><td><strong>'+a.codigo+'</strong></td><td>'+a.cedula+'</td><td>'+a.nombre+'</td><td>'+a.area+'</td><td>'+a.capacitacion+'</td><td>'+fmt(a.fecha)+'</td><td>'+a.hora+'</td><td><span class="bs bs-a">'+a.estado+'</span></td></tr>'; }).join('')+'</table>';
 }
 
-function exportarCSV() {
-  const capF=$('nom-cap-filter').value, fechaF=$('nom-fecha-filter').value, areaF=$('nom-area-filter').value;
-  const rows=asistencias.filter(a=>(!capF||a.capId===capF)&&(!fechaF||a.fecha===fechaF)&&(!areaF||a.area===areaF));
+function exportarCSV(){
+  var capF=gid('nom-cap-filter').value, fechaF=gid('nom-fecha-filter').value, areaF=gid('nom-area-filter').value;
+  var rows=asistencias.filter(function(a){ return (!capF||a.capId===capF)&&(!fechaF||a.fecha===fechaF)&&(!areaF||a.area===areaF); });
   if(!rows.length){ alert('No hay registros con los filtros seleccionados.'); return; }
-  const hdr=['#','Código Interno','Cédula','Nombre Completo','Área','Capacitación','Fecha','Hora Registro','Estado'];
-  const csv=[hdr,...rows.map((a,i)=>[i+1,a.codigo,a.cedula,a.nombre,a.area,a.capacitacion,fmt(a.fecha),a.hora,a.estado])]
-    .map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob);
-  const lnk=document.createElement('a'); lnk.href=url; lnk.download=`CAPACITA_IA_Nomina_${today()}.csv`; lnk.click();
+  var hdr=['#','Código Interno','Cédula','Nombre Completo','Área','Capacitación','Fecha','Hora Registro','Estado'];
+  var csv=[hdr].concat(rows.map(function(a,i){ return [i+1,a.codigo,a.cedula,a.nombre,a.area,a.capacitacion,fmt(a.fecha),a.hora,a.estado]; }))
+    .map(function(r){ return r.map(function(v){ return '"'+v+'"'; }).join(','); }).join('\n');
+  var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var lnk=document.createElement('a'); lnk.href=url; lnk.download='CAPACITA_IA_Nomina_'+today()+'.csv'; lnk.click();
   URL.revokeObjectURL(url);
 }
 
 // ============================================================
 // INIT
 // ============================================================
+loadData();
 setToday();
-setInterval(setToday,60000);
-populateAreaFilters();
+setInterval(setToday, 60000);
+populateFilters();
 updateCapSelects();
 renderDashboard();
 checkQRParam();
-
-// Hash change listener (for QR navigation within same page)
-window.addEventListener('hashchange', ()=>{
-  const hash=window.location.hash;
-  const m=hash.match(/cap=([^&]+)/);
-  if(m) navTo('asistencia',{capId:decodeURIComponent(m[1])});
-});
 </script>
 </body>
 </html>
