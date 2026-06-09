@@ -1,0 +1,2 @@
+# capacita-ia
+REGISTRO CAPACITACIONES
