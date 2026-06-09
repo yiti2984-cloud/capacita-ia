@@ -633,7 +633,7 @@ function generarQR(capId){
   var cap = capacitaciones.find(function(c){ return c.id===capId; });
   if(!cap) return;
   currentQRCapId = capId;
-  var base = window.location.href.split('?')[0].split('#')[0];
+  var base = window.location.href.split('?')[0].split('#')[0].replace(/\/$/,'');
   var qrURL = base+'?cap='+encodeURIComponent(capId);
   gid('qr-modal-title').textContent = '🔳 QR — '+cap.nombre;
   gid('qr-modal-info').innerHTML = '<strong>'+cap.nombre+'</strong> · '+fmt(cap.fecha)+' · '+cap.hinicio+'–'+cap.hfin+'<br>Responsable: '+cap.responsable;
