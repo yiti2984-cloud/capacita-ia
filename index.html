@@ -245,11 +245,11 @@ body.kiosco .asist-box .card { box-shadow:0 8px 32px rgba(0,0,0,.25); border-rad
 var AREAS = ['Producción','Calidad','Logística','RRHH','Finanzas','Comercial','TI','Mantenimiento','Seguridad','Gerencia'];
 
 var empleados = [
-  {codigo:'29',cedula:'31576717',nombre:'GUAPACHA LOZANO TANIA MARCELA',area:'GERENCIA GENERAL',cargo:'GERENTE GENERAL',estado:'Activo'},
-  {codigo:'50',cedula:'38862402',nombre:'LUCERO CUARAN OLGA MARINA',area:'PROVEEDURIA DE CAÑA',cargo:'ANALISTA PROVEEDORES',estado:'Activo'},
-  {codigo:'62',cedula:'1115066228',nombre:'LOPEZ PEREZ LEIDY VIVIANA',area:'CONTABILIDAD',cargo:'JEFE CONTABILIDAD Y COSTOS',estado:'Activo'},
-  {codigo:'83',cedula:'14888496',nombre:'ORTEGA RIOS CARLOS ALBERTO',area:'TECNOLOGIA',cargo:'INGENIERO DE MEJORAMIENTO',estado:'Activo'},
-  {codigo:'96',cedula:'6327358',nombre:'GETIAL GETIAL ANTONIO MARIA',area:'ALMACEN',cargo:'ANALISTA PLANEACION MANTENIMIENTO',estado:'Activo'},
+  {codigo:'29',nombre:'GUAPACHA LOZANO TANIA MARCELA',estado:'Activo'},
+  {codigo:'50',nombre:'LUCERO CUARAN OLGA MARINA',estado:'Activo'},
+  {codigo:'62',nombre:'LOPEZ PEREZ LEIDY VIVIANA',estado:'Activo'},
+  {codigo:'83',nombre:'ORTEGA RIOS CARLOS ALBERTO',estado:'Activo'},
+  {codigo:'96',nombre:'GETIAL GETIAL ANTONIO MARIA',estado:'Activo'},
 ];
 
 var capacitaciones = [];
@@ -467,16 +467,16 @@ function renderEmpleados(){
     return (!q||e.nombre.toLowerCase().includes(q)||e.cedula.includes(q)||e.codigo.toLowerCase().includes(q))&&(!area||e.area===area)&&(!est||e.estado===est);
   });
   gid('emp-count').textContent = f.length+' de '+empleados.length+' empleados';
-  gid('emp-table').innerHTML = '<table><tr><th>Código</th><th>Cédula</th><th>Nombre</th><th>Área</th><th>Cargo</th><th>Estado</th></tr>'+
+  gid('emp-table').innerHTML = '<table><tr><th>Código</th><th>Nombre</th><th>Estado</th></tr>'+
     f.map(function(e){
-      return '<tr><td><strong>'+e.codigo+'</strong></td><td>'+e.cedula+'</td><td>'+e.nombre+'</td><td>'+e.area+'</td><td>'+e.cargo+'</td><td><span class="bs '+(e.estado==='Activo'?'bs-a':'bs-i')+'">'+e.estado+'</span></td></tr>';
+      return '<tr><td><strong>'+e.codigo+'</strong></td><td>'+e.nombre+'</td><td><span class="bs '+(e.estado==='Activo'?'bs-a':'bs-i')+'">'+e.estado+'</span></td></tr>';
     }).join('')+'</table>';
 }
 
 // ============================================================
 // CSV IMPORT
 // ============================================================
-var REQ_COLS = ['codigo_interno','cedula','nombre','area','cargo','estado'];
+var REQ_COLS = ['codigo_interno','nombre','estado'];
 
 gid('csv-file-input').addEventListener('change', function(){
   if(this.files && this.files[0]) handleCSV(this.files[0]);
@@ -529,11 +529,10 @@ function parseCSV(text){
     }
     var estadoRaw = getCell('estado');
     var estadoNorm = normalizeEstado(estadoRaw);
-    var emp = { codigo:getCell('codigo_interno'), cedula:getCell('cedula'), nombre:getCell('nombre'), area:getCell('area'), cargo:getCell('cargo'), estado:estadoNorm||estadoRaw };
+    var emp = { codigo:getCell('codigo_interno'), nombre:getCell('nombre'), estado:estadoNorm||estadoRaw };
     var rowErrors = [];
     if(!emp.codigo) rowErrors.push('código vacío');
-    if(!emp.cedula)  rowErrors.push('cédula vacía');
-    if(!emp.nombre)  rowErrors.push('nombre vacío');
+    if(!emp.nombre) rowErrors.push('nombre vacío');
     if(!estadoNorm)  rowErrors.push('estado no reconocido: "'+estadoRaw+'"');
     if(rowErrors.length){ errs.push('Fila '+(i+1)+' ('+emp.nombre+'): '+rowErrors.join(', ')); continue; }
     rows.push(emp);
@@ -711,9 +710,7 @@ function registrarAsistencia(){
   res.innerHTML =
     '<div style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:24px;text-align:center">' +
       '<div style="font-size:.9rem;color:var(--txt2);margin-bottom:14px">¿Eres tú? Confirma tu identidad</div>' +
-      '<div style="font-size:1.5rem;font-weight:700;color:var(--pri);margin-bottom:4px">'+emp.nombre+'</div>' +
-      '<div style="font-size:.95rem;color:var(--txt2);margin-bottom:4px">Cédula: <strong>'+emp.cedula+'</strong></div>' +
-      '<div style="font-size:.85rem;color:var(--txt2);margin-bottom:20px">'+emp.area+' · '+emp.cargo+'</div>' +
+      '<div style="font-size:1.5rem;font-weight:700;color:var(--pri);margin-bottom:20px">'+emp.nombre+'</div>' +
       '<div style="display:flex;gap:12px;justify-content:center">' +
         '<button class="btn btn-suc" style="flex:1;max-width:160px;justify-content:center" onclick="confirmarAsistencia(\''+capId+'\',\''+emp.codigo+'\')">✅ Sí, soy yo</button>' +
         '<button class="btn btn-dan" style="flex:1;max-width:160px;justify-content:center" onclick="cancelarConfirmacion()">❌ No soy yo</button>' +
@@ -726,7 +723,7 @@ function confirmarAsistencia(capId, codigo){
   var emp = empleados.find(function(e){ return String(e.codigo).trim()===String(codigo).trim(); });
   if(!cap||!emp) return;
   var fecha=today(), hora=timeNow();
-  asistencias.push({id:nextAsistId++,codigo:emp.codigo,cedula:emp.cedula,nombre:emp.nombre,area:emp.area,capacitacion:cap.nombre,capId:cap.id,fecha:fecha,hora:hora,estado:'Válido'});
+  asistencias.push({id:nextAsistId++,codigo:emp.codigo,nombre:emp.nombre,capacitacion:cap.nombre,capId:cap.id,fecha:fecha,hora:hora,estado:'Válido'});
   saveData();
   gid('asist-result').innerHTML=
     '<div class="asist-result ok">' +
@@ -762,16 +759,16 @@ function renderNomina(){
   var capF=gid('nom-cap-filter').value, fechaF=gid('nom-fecha-filter').value, areaF=gid('nom-area-filter').value;
   var f=asistencias.filter(function(a){ return (!capF||a.capId===capF)&&(!fechaF||a.fecha===fechaF)&&(!areaF||a.area===areaF); });
   gid('nom-count').textContent=f.length+' registros';
-  gid('nom-table').innerHTML='<table><tr><th>#</th><th>Código</th><th>Cédula</th><th>Nombre</th><th>Área</th><th>Capacitación</th><th>Fecha</th><th>Hora</th><th>Estado</th></tr>'+
-    f.map(function(a,i){ return '<tr><td>'+(i+1)+'</td><td><strong>'+a.codigo+'</strong></td><td>'+a.cedula+'</td><td>'+a.nombre+'</td><td>'+a.area+'</td><td>'+a.capacitacion+'</td><td>'+fmt(a.fecha)+'</td><td>'+a.hora+'</td><td><span class="bs bs-a">'+a.estado+'</span></td></tr>'; }).join('')+'</table>';
+  gid('nom-table').innerHTML='<table><tr><th>#</th><th>Código</th><th>Nombre</th><th>Capacitación</th><th>Fecha</th><th>Hora</th><th>Estado</th></tr>'+
+    f.map(function(a,i){ return '<tr><td>'+(i+1)+'</td><td><strong>'+a.codigo+'</strong></td><td>'+a.nombre+'</td><td>'+a.capacitacion+'</td><td>'+fmt(a.fecha)+'</td><td>'+a.hora+'</td><td><span class="bs bs-a">'+a.estado+'</span></td></tr>'; }).join('')+'</table>';
 }
 
 function exportarCSV(){
   var capF=gid('nom-cap-filter').value, fechaF=gid('nom-fecha-filter').value, areaF=gid('nom-area-filter').value;
   var rows=asistencias.filter(function(a){ return (!capF||a.capId===capF)&&(!fechaF||a.fecha===fechaF)&&(!areaF||a.area===areaF); });
   if(!rows.length){ alert('No hay registros con los filtros seleccionados.'); return; }
-  var hdr=['#','Código Interno','Cédula','Nombre Completo','Área','Capacitación','Fecha','Hora Registro','Estado'];
-  var csv=[hdr].concat(rows.map(function(a,i){ return [i+1,a.codigo,a.cedula,a.nombre,a.area,a.capacitacion,fmt(a.fecha),a.hora,a.estado]; }))
+  var hdr=['#','Código Interno','Nombre Completo','Capacitación','Fecha','Hora Registro','Estado'];
+  var csv=[hdr].concat(rows.map(function(a,i){ return [i+1,a.codigo,a.nombre,a.capacitacion,fmt(a.fecha),a.hora,a.estado]; }))
     .map(function(r){ return r.map(function(v){ return '"'+v+'"'; }).join(','); }).join('\n');
   var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
   var url=URL.createObjectURL(blob);
