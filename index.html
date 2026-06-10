@@ -825,7 +825,28 @@ function checkQRParam(){
     logo.innerHTML='<h1>🎓 CAPACITA IA</h1><p>Registro de Asistencia</p>';
     box.insertBefore(logo,box.firstChild);
   }
-  loadAsistencia(capId);
+
+  var banner=gid('qr-presel-banner');
+  banner.innerHTML='<div class="loading"><span class="spinner"></span>Cargando capacitación...</div>';
+
+  // Buscar directamente en Firebase por ID del documento
+  db.collection('capacitaciones').doc(capId).get().then(function(doc){
+    if(doc.exists){
+      var c=Object.assign({id:doc.id},doc.data());
+      // Agregar a cache si no existe
+      var exists=capacitaciones.find(function(x){ return x.id===c.id; });
+      if(!exists) capacitaciones.push(c);
+      updateCapSelects();
+      setTimeout(function(){
+        gid('asist-cap').value=capId;
+        banner.innerHTML='<div class="qr-badge">🔳 '+c.nombre+'</div>';
+      },200);
+    } else {
+      banner.innerHTML='<div class="alert al-war">⚠️ QR no corresponde a una capacitación activa.</div>';
+    }
+  }).catch(function(e){
+    banner.innerHTML='<div class="alert al-dan">❌ Error de conexión. Intenta de nuevo.</div>';
+  });
 }
 
 // ============================================================
