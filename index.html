@@ -502,13 +502,19 @@ function crearCapacitacion(){
   if(faltantes.length){ gid('cap-alert').innerHTML='<div class="alert al-war">⚠️ Faltan: <strong>'+faltantes.join(', ')+'</strong></div>'; return; }
   if(hi>=hf){ gid('cap-alert').innerHTML='<div class="alert al-dan">❌ Hora fin debe ser mayor a hora inicio.</div>'; return; }
 
-  var data = {nombre:n, fecha:f, hinicio:hi, hfin:hf, responsable:r, area:'Abierta', creadoEn:new Date().toISOString()};
-  db.collection('capacitaciones').add(data).then(function(ref){
-    gid('cap-alert').innerHTML='<div class="alert al-suc">✅ Capacitación "<strong>'+n+'</strong>" creada.</div>';
-    ['cap-nombre','cap-fecha','cap-hinicio','cap-hfin','cap-resp'].forEach(function(id){ gid(id).value=''; });
-    loadCapacitaciones();
-    setTimeout(function(){ gid('cap-alert').innerHTML=''; },4000);
-  }).catch(function(e){ gid('cap-alert').innerHTML='<div class="alert al-dan">❌ Error: '+e.message+'</div>'; });
+  // Generar ID tipo CAP-001 basado en conteo actual
+  db.collection('capacitaciones').get().then(function(snap){
+    var num = snap.size + 1;
+    var id = 'CAP-' + String(num).padStart(3,'0');
+    var data = {id:id, nombre:n, fecha:f, hinicio:hi, hfin:hf, responsable:r, area:'Abierta', creadoEn:new Date().toISOString()};
+    // Usar el ID personalizado como documento
+    db.collection('capacitaciones').doc(id).set(data).then(function(){
+      gid('cap-alert').innerHTML='<div class="alert al-suc">✅ Capacitación "<strong>'+n+'</strong>" creada — ID: '+id+'</div>';
+      ['cap-nombre','cap-fecha','cap-hinicio','cap-hfin','cap-resp'].forEach(function(i){ gid(i).value=''; });
+      loadCapacitaciones();
+      setTimeout(function(){ gid('cap-alert').innerHTML=''; },4000);
+    }).catch(function(e){ gid('cap-alert').innerHTML='<div class="alert al-dan">❌ Error: '+e.message+'</div>'; });
+  });
 }
 
 function borrarCapacitaciones(){
@@ -594,23 +600,26 @@ function loadAsistencia(preselCapId){
 
 function preseleccionarCap(capId){
   var banner=gid('qr-presel-banner');
-  // Buscar en cache o en Firebase
   var cap=capacitaciones.find(function(c){ return c.id===capId; });
   if(cap){
     gid('asist-cap').value=capId;
     banner.innerHTML='<div class="qr-badge">🔳 Cargada desde QR: <strong>'+cap.nombre+'</strong></div>';
   } else {
-    // Buscar en Firebase directamente
+    // Buscar directamente por ID del documento en Firebase
     db.collection('capacitaciones').doc(capId).get().then(function(doc){
       if(doc.exists){
         var c=Object.assign({id:doc.id},doc.data());
         capacitaciones.push(c);
         updateCapSelects();
-        gid('asist-cap').value=capId;
-        banner.innerHTML='<div class="qr-badge">🔳 Cargada desde QR: <strong>'+c.nombre+'</strong></div>';
+        setTimeout(function(){
+          gid('asist-cap').value=capId;
+          banner.innerHTML='<div class="qr-badge">🔳 Cargada desde QR: <strong>'+c.nombre+'</strong></div>';
+        },300);
       } else {
         banner.innerHTML='<div class="alert al-war">⚠️ QR no corresponde a una capacitación activa.</div>';
       }
+    }).catch(function(){
+      banner.innerHTML='<div class="alert al-dan">❌ Error de conexión al verificar capacitación.</div>';
     });
   }
 }
